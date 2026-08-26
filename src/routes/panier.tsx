@@ -79,7 +79,9 @@ function CartPage() {
     setSending(true);
     try {
       const number = orderNumber();
+      const orderId = crypto.randomUUID();
       const { error } = await supabase.from("orders").insert({
+        id: orderId,
         shop_id: cart.shopId,
         order_number: number,
         customer_name: name.trim(),
@@ -93,23 +95,16 @@ function CartPage() {
       });
       if (error) throw error;
 
-      const { data: created, error: findError } = await supabase
-        .from("orders")
-        .select("id")
-        .eq("order_number", number)
-        .maybeSingle();
-
-      if (!findError && created?.id) {
-        await supabase.from("order_items").insert(
-          cart.items.map((item) => ({
-            order_id: created.id,
-            product_id: item.productId,
-            product_name: item.name,
-            quantity: item.quantity,
-            unit_price: item.price,
-          })),
-        );
-      }
+      const { error: itemsError } = await supabase.from("order_items").insert(
+        cart.items.map((item) => ({
+          order_id: orderId,
+          product_id: item.productId,
+          product_name: item.name,
+          quantity: item.quantity,
+          unit_price: item.price,
+        })),
+      );
+      if (itemsError) throw itemsError;
 
       const message = buildWhatsAppMessage({
         orderNumber: number,
