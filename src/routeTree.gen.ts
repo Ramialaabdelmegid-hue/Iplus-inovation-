@@ -10,11 +10,23 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as PanierRouteImport } from './routes/panier'
 import { Route as BoutiqueSlugRouteImport } from './routes/boutique.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanierRoute = PanierRouteImport.update({
+  id: '/panier',
+  path: '/panier',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BoutiqueSlugRoute = BoutiqueSlugRouteImport.update({
@@ -25,27 +37,35 @@ const BoutiqueSlugRoute = BoutiqueSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/panier': typeof PanierRoute
   '/boutique/$slug': typeof BoutiqueSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/panier': typeof PanierRoute
   '/boutique/$slug': typeof BoutiqueSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/panier': typeof PanierRoute
   '/boutique/$slug': typeof BoutiqueSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/boutique/$slug'
+  fullPaths: '/' | '/auth' | '/panier' | '/boutique/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/boutique/$slug'
-  id: '__root__' | '/' | '/boutique/$slug'
+  to: '/' | '/auth' | '/panier' | '/boutique/$slug'
+  id: '__root__' | '/' | '/auth' | '/panier' | '/boutique/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  PanierRoute: typeof PanierRoute
   BoutiqueSlugRoute: typeof BoutiqueSlugRoute
 }
 
@@ -56,6 +76,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panier': {
+      id: '/panier'
+      path: '/panier'
+      fullPath: '/panier'
+      preLoaderRoute: typeof PanierRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/boutique/$slug': {
@@ -70,6 +104,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  PanierRoute: PanierRoute,
   BoutiqueSlugRoute: BoutiqueSlugRoute,
 }
 export const routeTree = rootRouteImport
