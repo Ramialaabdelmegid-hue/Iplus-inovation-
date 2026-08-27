@@ -10,13 +10,19 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PanierRouteImport } from './routes/panier'
+import { Route as AuthenticatedTableauDeBordRouteImport } from './routes/_authenticated/tableau-de-bord'
 import { Route as BoutiqueSlugRouteImport } from './routes/boutique.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -29,6 +35,12 @@ const PanierRoute = PanierRouteImport.update({
   path: '/panier',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedTableauDeBordRoute =
+  AuthenticatedTableauDeBordRouteImport.update({
+    id: '/tableau-de-bord',
+    path: '/tableau-de-bord',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const BoutiqueSlugRoute = BoutiqueSlugRouteImport.update({
   id: '/boutique/$slug',
   path: '/boutique/$slug',
@@ -39,31 +51,43 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/panier': typeof PanierRoute
+  '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/boutique/$slug': typeof BoutiqueSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/panier': typeof PanierRoute
+  '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/boutique/$slug': typeof BoutiqueSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/panier': typeof PanierRoute
+  '/_authenticated/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/boutique/$slug': typeof BoutiqueSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/panier' | '/boutique/$slug'
+  fullPaths: '/' | '/auth' | '/panier' | '/tableau-de-bord' | '/boutique/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/panier' | '/boutique/$slug'
-  id: '__root__' | '/' | '/auth' | '/panier' | '/boutique/$slug'
+  to: '/' | '/auth' | '/panier' | '/tableau-de-bord' | '/boutique/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/panier'
+    | '/_authenticated/tableau-de-bord'
+    | '/boutique/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   PanierRoute: typeof PanierRoute
   BoutiqueSlugRoute: typeof BoutiqueSlugRoute
@@ -76,6 +100,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -92,6 +123,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanierRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/tableau-de-bord': {
+      id: '/_authenticated/tableau-de-bord'
+      path: '/tableau-de-bord'
+      fullPath: '/tableau-de-bord'
+      preLoaderRoute: typeof AuthenticatedTableauDeBordRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/boutique/$slug': {
       id: '/boutique/$slug'
       path: '/boutique/$slug'
@@ -102,8 +140,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedTableauDeBordRoute: typeof AuthenticatedTableauDeBordRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedTableauDeBordRoute: AuthenticatedTableauDeBordRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   PanierRoute: PanierRoute,
   BoutiqueSlugRoute: BoutiqueSlugRoute,
