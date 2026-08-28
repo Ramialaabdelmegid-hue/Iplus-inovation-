@@ -8,22 +8,57 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { fcfa } from "@/lib/format";
 import { useCart } from "@/lib/cart";
+import { fetchShopSeo } from "@/lib/shop-seo";
 
 export const Route = createFileRoute("/boutique/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `Boutique ${params.slug} — PAZ SHOP` },
-      {
-        name: "description",
-        content: `Découvrez les produits de la boutique ${params.slug} sur PAZ SHOP et commandez avec paiement à la livraison.`,
-      },
-      { property: "og:title", content: `Boutique ${params.slug} — PAZ SHOP` },
-      {
-        property: "og:description",
-        content: `Produits, prix en FCFA et commande WhatsApp pour la boutique ${params.slug}.`,
-      },
-    ],
-  }),
+  loader: async ({ params }) => ({ seo: await fetchShopSeo(params.slug) }),
+  head: ({ params, loaderData }) => {
+    const seo = loaderData?.seo;
+    const name = seo?.name ?? params.slug;
+    const place = [seo?.quartier, seo?.city].filter(Boolean).join(", ");
+    const title = `${name} — Boutique en ligne${place ? ` à ${place}` : ""} | Iplus`;
+    const description =
+      seo?.description?.slice(0, 155) ||
+      `Découvrez les produits de ${name}${place ? ` à ${place}` : ""} : prix en FCFA, commande sur WhatsApp et paiement à la livraison.`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+        ...(seo?.logo_url
+          ? [
+              { property: "og:image", content: seo.logo_url },
+              { name: "twitter:image", content: seo.logo_url },
+            ]
+          : []),
+      ],
+      scripts: seo
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Store",
+                name: seo.name,
+                description: seo.description ?? undefined,
+                image: seo.logo_url ?? undefined,
+                address: place
+                  ? {
+                      "@type": "PostalAddress",
+                      addressLocality: seo.city ?? undefined,
+                      streetAddress: seo.quartier ?? undefined,
+                      addressCountry: "NE",
+                    }
+                  : undefined,
+              }),
+            },
+          ]
+        : [],
+    };
+  },
   component: ShopPage,
 });
 

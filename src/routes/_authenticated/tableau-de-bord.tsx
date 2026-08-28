@@ -18,13 +18,13 @@ import { fcfa, slugify, ORDER_STATUS_LABELS, nextStatus } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/tableau-de-bord")({
   head: () => ({
     meta: [
-      { title: "Tableau de bord commerçant — PAZ SHOP" },
+      { title: "Tableau de bord commerçant — Iplus" },
       {
         name: "description",
         content:
-          "Gérez votre boutique PAZ SHOP : informations, produits, stock et suivi des commandes reçues.",
+          "Gérez votre boutique Iplus : informations, produits, stock et suivi des commandes reçues.",
       },
-      { property: "og:title", content: "Tableau de bord commerçant — PAZ SHOP" },
+      { property: "og:title", content: "Tableau de bord commerçant — Iplus" },
       {
         property: "og:description",
         content: "Boutique, produits et commandes : tout se gère depuis un seul écran.",
@@ -76,7 +76,7 @@ function DashboardPage() {
               <ShoppingBag className="h-5 w-5" />
             </span>
             <span className="font-display text-lg font-bold text-foreground">
-              PAZ <span className="text-primary">SHOP</span>
+              I<span className="text-primary">plus</span>
             </span>
           </Link>
           <div className="ml-auto flex items-center gap-2">

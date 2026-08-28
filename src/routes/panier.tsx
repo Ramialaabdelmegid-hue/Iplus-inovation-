@@ -13,16 +13,16 @@ import { buildWhatsAppMessage, whatsappLink } from "@/lib/whatsapp";
 export const Route = createFileRoute("/panier")({
   head: () => ({
     meta: [
-      { title: "Mon panier — PAZ SHOP" },
+      { title: "Mon panier — Iplus" },
       {
         name: "description",
         content:
           "Vérifiez votre panier, renseignez votre quartier et envoyez votre commande sur WhatsApp. Paiement à la livraison.",
       },
-      { property: "og:title", content: "Mon panier — PAZ SHOP" },
+      { property: "og:title", content: "Mon panier — Iplus" },
       {
         property: "og:description",
-        content: "Commandez en quelques secondes et payez à la livraison avec PAZ SHOP.",
+        content: "Commandez en quelques secondes et payez à la livraison avec Iplus.",
       },
     ],
   }),
@@ -33,7 +33,7 @@ function orderNumber(): string {
   const now = new Date();
   const stamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}`;
   const rand = Math.floor(Math.random() * 9000 + 1000);
-  return `PAZ-${stamp}-${rand}`;
+  return `IPL-${stamp}-${rand}`;
 }
 
 function CartPage() {
