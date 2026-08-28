@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { fcfa } from "@/lib/format";
 import { useCart } from "@/lib/cart";
+import { fetchShopSeo } from "@/lib/shop-seo";
 
 export const Route = createFileRoute("/boutique/$slug")({
   loader: async ({ params }) => ({ seo: await fetchShopSeo(params.slug) }),
