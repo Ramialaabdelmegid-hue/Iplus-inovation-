@@ -23,6 +23,24 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+function frMessage(message: string) {
+  const m = message.toLowerCase();
+  if (m.includes("weak") || m.includes("pwned"))
+    return "Ce mot de passe est trop courant. Choisis-en un plus solide (12+ caractères, chiffres et symboles).";
+  if (m.includes("at least") || m.includes("6 characters"))
+    return "Mot de passe trop court : 6 caractères minimum.";
+  if (m.includes("already registered") || m.includes("already been registered"))
+    return "Un compte existe déjà avec cet email. Connecte-toi.";
+  if (m.includes("invalid login credentials")) return "Email ou mot de passe incorrect.";
+  if (m.includes("email not confirmed"))
+    return "Email pas encore confirmé. Clique sur le lien reçu par mail.";
+  if (m.includes("invalid email") || m.includes("email address"))
+    return "Adresse email invalide.";
+  if (m.includes("rate limit") || m.includes("too many"))
+    return "Trop de tentatives. Réessaie dans quelques minutes.";
+  return message;
+}
+
 function AuthPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -30,6 +48,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -42,10 +61,14 @@ function AuthPage() {
       toast.error("Email et mot de passe obligatoires");
       return;
     }
+    if (mode === "signup" && password.length < 8) {
+      toast.error("Choisis un mot de passe de 8 caractères minimum.");
+      return;
+    }
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
           password,
           options: {
@@ -54,23 +77,57 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Compte créé. Vérifie ta boîte mail si demandé.");
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password,
-        });
-        if (error) throw error;
+        if (!data.session) {
+          setPendingEmail(email.trim());
+          toast.success("Compte créé ! Confirme ton email pour continuer.");
+          return;
+        }
+        navigate({ to: "/tableau-de-bord" });
+        return;
       }
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      if (error) throw error;
       const { data } = await supabase.auth.getSession();
       if (data.session) navigate({ to: "/tableau-de-bord" });
     } catch (error) {
       console.error(error);
-      toast.error(error instanceof Error ? error.message : "Connexion impossible");
+      toast.error(
+        error instanceof Error ? frMessage(error.message) : "Connexion impossible",
+      );
     } finally {
       setLoading(false);
     }
   }
+
+  if (pendingEmail) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-secondary/40 px-4 py-10">
+        <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6 text-center shadow-sm">
+          <h1 className="font-display text-2xl font-bold text-foreground">
+            Vérifie ta boîte mail
+          </h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Nous avons envoyé un lien de confirmation à{" "}
+            <span className="font-semibold text-foreground">{pendingEmail}</span>. Clique
+            dessus pour activer ton compte commerçant, puis reviens te connecter.
+          </p>
+          <button
+            onClick={() => {
+              setPendingEmail(null);
+              setMode("signin");
+            }}
+            className="mt-6 h-12 w-full rounded-xl bg-primary text-sm font-bold text-primary-foreground"
+          >
+            Retour à la connexion
+          </button>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-secondary/40 px-4 py-10">
