@@ -12,12 +12,12 @@ import { useCart } from "@/lib/cart";
 export const Route = createFileRoute("/boutique/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `Boutique ${params.slug} — PAZ SHOP` },
+      { title: `Boutique ${params.slug} — Iplus` },
       {
         name: "description",
-        content: `Découvrez les produits de la boutique ${params.slug} sur PAZ SHOP et commandez avec paiement à la livraison.`,
+        content: `Découvrez les produits de la boutique ${params.slug} sur Iplus et commandez avec paiement à la livraison.`,
       },
-      { property: "og:title", content: `Boutique ${params.slug} — PAZ SHOP` },
+      { property: "og:title", content: `Boutique ${params.slug} — Iplus` },
       {
         property: "og:description",
         content: `Produits, prix en FCFA et commande WhatsApp pour la boutique ${params.slug}.`,
