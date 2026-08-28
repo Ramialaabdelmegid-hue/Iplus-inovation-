@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PanierRouteImport } from './routes/panier'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedTableauDeBordRouteImport } from './routes/_authenticated/tableau-de-bord'
 import { Route as BoutiqueSlugRouteImport } from './routes/boutique.$slug'
 
@@ -35,6 +36,11 @@ const PanierRoute = PanierRouteImport.update({
   path: '/panier',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedTableauDeBordRoute =
   AuthenticatedTableauDeBordRouteImport.update({
     id: '/tableau-de-bord',
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/panier': typeof PanierRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/boutique/$slug': typeof BoutiqueSlugRoute
 }
@@ -58,6 +65,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/panier': typeof PanierRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/boutique/$slug': typeof BoutiqueSlugRoute
 }
@@ -67,20 +75,34 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/panier': typeof PanierRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/boutique/$slug': typeof BoutiqueSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/panier' | '/tableau-de-bord' | '/boutique/$slug'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/panier'
+    | '/sitemap.xml'
+    | '/tableau-de-bord'
+    | '/boutique/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/panier' | '/tableau-de-bord' | '/boutique/$slug'
+  to:
+    | '/'
+    | '/auth'
+    | '/panier'
+    | '/sitemap.xml'
+    | '/tableau-de-bord'
+    | '/boutique/$slug'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/panier'
+    | '/sitemap.xml'
     | '/_authenticated/tableau-de-bord'
     | '/boutique/$slug'
   fileRoutesById: FileRoutesById
@@ -90,6 +112,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   PanierRoute: typeof PanierRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   BoutiqueSlugRoute: typeof BoutiqueSlugRoute
 }
 
@@ -121,6 +144,13 @@ declare module '@tanstack/react-router' {
       path: '/panier'
       fullPath: '/panier'
       preLoaderRoute: typeof PanierRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/tableau-de-bord': {
@@ -156,6 +186,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   PanierRoute: PanierRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   BoutiqueSlugRoute: BoutiqueSlugRoute,
 }
 export const routeTree = rootRouteImport
