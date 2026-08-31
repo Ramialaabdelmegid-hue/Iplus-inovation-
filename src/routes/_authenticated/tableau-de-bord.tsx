@@ -74,6 +74,29 @@ function DashboardPage() {
 
   const shop = shopQuery.data ?? null;
 
+  const profileQuery = useQuery({
+    queryKey: ["my-profile"],
+    queryFn: async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
+      if (!user) return null;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (error) throw error;
+      const fullName =
+        data?.full_name ?? (user.user_metadata?.["full_name"] as string | undefined) ?? null;
+      if (!data && fullName) {
+        await supabase.from("profiles").insert({ id: user.id, full_name: fullName });
+      }
+      return { full_name: fullName, email: user.email ?? null };
+    },
+  });
+
+  const profileName = profileQuery.data?.full_name?.trim() || null;
+
   async function signOut() {
     await queryClient.cancelQueries();
     queryClient.clear();
