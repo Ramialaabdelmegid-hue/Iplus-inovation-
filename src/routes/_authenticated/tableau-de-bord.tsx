@@ -298,15 +298,13 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
             placeholder="Plateau"
           />
         </label>
-        <label className="text-sm sm:col-span-2">
-          <span className="font-medium">Logo (URL image)</span>
-          <input
-            className={`${inputClass} mt-1`}
-            value={form.logo_url}
-            onChange={(e) => setForm({ ...form, logo_url: e.target.value })}
-            placeholder="https://..."
-          />
-        </label>
+        <ImageUploadField
+          label="Logo de la boutique"
+          folder="logos"
+          value={form.logo_url}
+          onChange={(url) => setForm({ ...form, logo_url: url })}
+          className="sm:col-span-2"
+        />
         <label className="text-sm sm:col-span-2">
           <span className="font-medium">Description</span>
           <textarea
