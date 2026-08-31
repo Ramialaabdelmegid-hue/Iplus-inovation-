@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { fcfa, slugify, ORDER_STATUS_LABELS, nextStatus } from "@/lib/format";
+import { ImageUploadField } from "@/components/ImageUploadField";
 
 export const Route = createFileRoute("/_authenticated/tableau-de-bord")({
   head: () => ({
