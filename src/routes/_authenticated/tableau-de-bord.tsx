@@ -234,7 +234,7 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
       onSaved();
     } catch (error) {
       console.error(error);
-      toast.error(error instanceof Error ? error.message : "Enregistrement impossible");
+      toast.error(shopErrorMessage(error));
     } finally {
       setSaving(false);
     }
