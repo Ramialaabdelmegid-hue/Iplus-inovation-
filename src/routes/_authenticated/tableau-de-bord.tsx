@@ -487,11 +487,12 @@ function ProductsPanel({ shopId }: { shopId: string }) {
             value={form.stock}
             onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
           />
-          <input
-            className={`${inputClass} sm:col-span-2`}
-            placeholder="Image (URL)"
+          <ImageUploadField
+            label="Photo du produit"
+            folder="produits"
             value={form.image}
-            onChange={(e) => setForm({ ...form, image: e.target.value })}
+            onChange={(url) => setForm({ ...form, image: url })}
+            className="sm:col-span-2"
           />
           <textarea
             rows={2}
