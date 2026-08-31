@@ -39,6 +39,19 @@ type Tab = "boutique" | "produits" | "commandes";
 const inputClass =
   "h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none focus:border-primary";
 
+function shopErrorMessage(error: unknown): string {
+  const raw = error instanceof Error ? error.message : String(error ?? "");
+  const m = raw.toLowerCase();
+  if (m.includes("duplicate key") || m.includes("unique") || m.includes("23505") || m.includes("slug")) {
+    return "Ce nom de boutique est déjà pris, choisis-en un autre.";
+  }
+  if (m.includes("row-level security") || m.includes("permission")) {
+    return "Action non autorisée. Reconnecte-toi et réessaie.";
+  }
+  if (!raw) return "Enregistrement impossible";
+  return raw;
+}
+
 function DashboardPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
