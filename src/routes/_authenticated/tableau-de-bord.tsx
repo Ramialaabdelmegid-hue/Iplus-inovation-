@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { fcfa, slugify, ORDER_STATUS_LABELS, nextStatus } from "@/lib/format";
+import { ImageUploadField } from "@/components/ImageUploadField";
 
 export const Route = createFileRoute("/_authenticated/tableau-de-bord")({
   head: () => ({
@@ -39,6 +40,19 @@ type Tab = "boutique" | "produits" | "commandes";
 const inputClass =
   "h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none focus:border-primary";
 
+function shopErrorMessage(error: unknown): string {
+  const raw = error instanceof Error ? error.message : String(error ?? "");
+  const m = raw.toLowerCase();
+  if (m.includes("duplicate key") || m.includes("unique") || m.includes("23505") || m.includes("slug")) {
+    return "Ce nom de boutique est déjà pris, choisis-en un autre.";
+  }
+  if (m.includes("row-level security") || m.includes("permission")) {
+    return "Action non autorisée. Reconnecte-toi et réessaie.";
+  }
+  if (!raw) return "Enregistrement impossible";
+  return raw;
+}
+
 function DashboardPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -59,6 +73,29 @@ function DashboardPage() {
   });
 
   const shop = shopQuery.data ?? null;
+
+  const profileQuery = useQuery({
+    queryKey: ["my-profile"],
+    queryFn: async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
+      if (!user) return null;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (error) throw error;
+      const fullName =
+        data?.full_name ?? (user.user_metadata?.["full_name"] as string | undefined) ?? null;
+      if (!data && fullName) {
+        await supabase.from("profiles").insert({ id: user.id, full_name: fullName });
+      }
+      return { full_name: fullName, email: user.email ?? null };
+    },
+  });
+
+  const profileName = profileQuery.data?.full_name?.trim() || null;
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -103,7 +140,7 @@ function DashboardPage() {
 
       <main className="mx-auto max-w-6xl px-4 py-8">
         <h1 className="font-display text-2xl font-bold text-foreground sm:text-3xl">
-          Tableau de bord
+          {profileName ? `Bonjour ${profileName}` : "Tableau de bord"}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {shop ? shop.name : "Crée ta boutique pour commencer à vendre."}
@@ -234,7 +271,7 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
       onSaved();
     } catch (error) {
       console.error(error);
-      toast.error(error instanceof Error ? error.message : "Enregistrement impossible");
+      toast.error(shopErrorMessage(error));
     } finally {
       setSaving(false);
     }
@@ -298,15 +335,13 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
             placeholder="Plateau"
           />
         </label>
-        <label className="text-sm sm:col-span-2">
-          <span className="font-medium">Logo (URL image)</span>
-          <input
-            className={`${inputClass} mt-1`}
-            value={form.logo_url}
-            onChange={(e) => setForm({ ...form, logo_url: e.target.value })}
-            placeholder="https://..."
-          />
-        </label>
+        <ImageUploadField
+          label="Logo de la boutique"
+          folder="logos"
+          value={form.logo_url}
+          onChange={(url) => setForm({ ...form, logo_url: url })}
+          className="sm:col-span-2"
+        />
         <label className="text-sm sm:col-span-2">
           <span className="font-medium">Description</span>
           <textarea
@@ -452,11 +487,12 @@ function ProductsPanel({ shopId }: { shopId: string }) {
             value={form.stock}
             onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
           />
-          <input
-            className={`${inputClass} sm:col-span-2`}
-            placeholder="Image (URL)"
+          <ImageUploadField
+            label="Photo du produit"
+            folder="produits"
             value={form.image}
-            onChange={(e) => setForm({ ...form, image: e.target.value })}
+            onChange={(url) => setForm({ ...form, image: url })}
+            className="sm:col-span-2"
           />
           <textarea
             rows={2}
