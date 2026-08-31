@@ -20,10 +20,11 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2">
           <Link
             to="/tableau-de-bord"
-            className="hidden items-center gap-1.5 rounded-full border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary sm:flex"
+            className="flex items-center gap-1.5 rounded-full border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
           >
             <Store className="h-4 w-4" />
-            Espace commerçant
+            <span className="hidden sm:inline">Espace commerçant</span>
+            <span className="sm:hidden">Boutique</span>
           </Link>
           <Link
             to="/panier"
