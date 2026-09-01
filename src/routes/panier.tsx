@@ -237,14 +237,26 @@ function CartPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Nom complet"
-                  className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none focus:border-primary"
+                  maxLength={80}
+                  autoComplete="name"
+                  className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-primary"
                 />
                 <input
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Téléphone (ex : 90 00 00 00)"
                   inputMode="tel"
-                  className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none focus:border-primary"
+                  maxLength={20}
+                  autoComplete="tel"
+                  className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-primary"
+                />
+                <input
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="hidden"
                 />
                 <div className="grid grid-cols-2 gap-2">
                   {(["livraison", "retrait"] as const).map((option) => (
