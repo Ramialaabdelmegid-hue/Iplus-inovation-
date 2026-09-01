@@ -10,13 +10,13 @@ import { fcfa } from "@/lib/format";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Iplus — Boutiques en ligne au Niger" },
+      { title: "Sahel Star — Boutiques en ligne au Niger" },
       {
         name: "description",
         content:
-          "Découvrez les boutiques de Iplus, commandez vos produits en FCFA et payez à la livraison. Commande envoyée directement sur WhatsApp.",
+          "Découvrez les boutiques de Sahel Star, commandez vos produits en FCFA et payez à la livraison. Commande envoyée directement sur WhatsApp.",
       },
-      { property: "og:title", content: "Iplus — Boutiques en ligne au Niger" },
+      { property: "og:title", content: "Sahel Star — Boutiques en ligne au Niger" },
       {
         property: "og:description",
         content:

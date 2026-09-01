@@ -13,7 +13,7 @@ export function SiteHeader() {
             <ShoppingBag className="h-5 w-5" />
           </span>
           <span className="font-display text-lg font-bold tracking-tight text-foreground">
-            I<span className="text-primary">plus</span>
+            Sahel <span className="text-primary">Star</span>
           </span>
         </Link>
 

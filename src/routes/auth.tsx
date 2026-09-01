@@ -7,13 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Espace commerçant — Iplus" },
+      { title: "Espace commerçant — Sahel Star" },
       {
         name: "description",
         content:
-          "Connectez-vous pour créer votre boutique Iplus, gérer vos produits et suivre vos commandes.",
+          "Connectez-vous pour créer votre boutique Sahel Star, gérer vos produits et suivre vos commandes.",
       },
-      { property: "og:title", content: "Espace commerçant — Iplus" },
+      { property: "og:title", content: "Espace commerçant — Sahel Star" },
       {
         property: "og:description",
         content: "Créez votre boutique en ligne et recevez vos commandes sur WhatsApp.",
@@ -137,7 +137,7 @@ function AuthPage() {
             <ShoppingBag className="h-5 w-5" />
           </span>
           <span className="font-display text-lg font-bold text-foreground">
-            I<span className="text-primary">plus</span>
+            Sahel <span className="text-primary">Star</span>
           </span>
         </Link>
 

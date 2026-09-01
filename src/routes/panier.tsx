@@ -13,16 +13,16 @@ import { buildWhatsAppMessage, whatsappLink } from "@/lib/whatsapp";
 export const Route = createFileRoute("/panier")({
   head: () => ({
     meta: [
-      { title: "Mon panier — Iplus" },
+      { title: "Mon panier — Sahel Star" },
       {
         name: "description",
         content:
           "Vérifiez votre panier, renseignez votre quartier et envoyez votre commande sur WhatsApp. Paiement à la livraison.",
       },
-      { property: "og:title", content: "Mon panier — Iplus" },
+      { property: "og:title", content: "Mon panier — Sahel Star" },
       {
         property: "og:description",
-        content: "Commandez en quelques secondes et payez à la livraison avec Iplus.",
+        content: "Commandez en quelques secondes et payez à la livraison avec Sahel Star.",
       },
     ],
   }),

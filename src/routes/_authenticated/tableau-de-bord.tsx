@@ -19,13 +19,13 @@ import { ImageUploadField } from "@/components/ImageUploadField";
 export const Route = createFileRoute("/_authenticated/tableau-de-bord")({
   head: () => ({
     meta: [
-      { title: "Tableau de bord commerçant — Iplus" },
+      { title: "Tableau de bord commerçant — Sahel Star" },
       {
         name: "description",
         content:
-          "Gérez votre boutique Iplus : informations, produits, stock et suivi des commandes reçues.",
+          "Gérez votre boutique Sahel Star : informations, produits, stock et suivi des commandes reçues.",
       },
-      { property: "og:title", content: "Tableau de bord commerçant — Iplus" },
+      { property: "og:title", content: "Tableau de bord commerçant — Sahel Star" },
       {
         property: "og:description",
         content: "Boutique, produits et commandes : tout se gère depuis un seul écran.",
@@ -113,7 +113,7 @@ function DashboardPage() {
               <ShoppingBag className="h-5 w-5" />
             </span>
             <span className="font-display text-lg font-bold text-foreground">
-              I<span className="text-primary">plus</span>
+              Sahel <span className="text-primary">Star</span>
             </span>
           </Link>
           <div className="ml-auto flex items-center gap-2">

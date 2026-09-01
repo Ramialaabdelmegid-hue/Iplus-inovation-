@@ -79,10 +79,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Iplus — Boutiques en ligne au Niger" },
+      { title: "Sahel Star — Boutiques en ligne au Niger" },
       { name: "description", content: "Créez votre boutique en ligne au Niger, vendez sur WhatsApp et livrez avec paiement à la livraison." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Iplus — Boutiques en ligne au Niger" },
+      { property: "og:title", content: "Sahel Star — Boutiques en ligne au Niger" },
       { property: "og:description", content: "Boutiques locales, commande WhatsApp, paiement à la livraison." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
