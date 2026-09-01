@@ -9,6 +9,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { useCart } from "@/lib/cart";
 import { fcfa } from "@/lib/format";
 import { buildWhatsAppMessage, whatsappLink } from "@/lib/whatsapp";
+import { customerOrderSchema, checkOrderRate, recordOrderSent } from "@/lib/validation";
 
 export const Route = createFileRoute("/panier")({
   head: () => ({
