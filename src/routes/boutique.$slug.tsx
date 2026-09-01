@@ -160,7 +160,7 @@ function ShopPage() {
           </p>
           <Link
             to="/"
-            className="mt-6 inline-flex rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+            className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
           >
             Retour à l'accueil
           </Link>
@@ -180,10 +180,10 @@ function ShopPage() {
               <img
                 src={shop.logo_url}
                 alt={`Logo de ${shop.name}`}
-                className="h-20 w-20 rounded-2xl object-cover"
+                className="h-20 w-20 rounded-lg object-cover"
               />
             ) : (
-              <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-card font-display text-2xl font-bold text-primary">
+              <span className="flex h-20 w-20 items-center justify-center rounded-lg bg-card font-display text-2xl font-bold text-primary">
                 {shop.name.slice(0, 1).toUpperCase()}
               </span>
             )}
@@ -210,7 +210,7 @@ function ShopPage() {
         </section>
 
         <section className="mx-auto max-w-6xl px-4 py-8">
-          <div className="flex items-center gap-2 rounded-2xl border border-border bg-card p-2">
+          <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-2">
             <Search className="ml-2 h-5 w-5 text-muted-foreground" />
             <input
               value={term}
@@ -225,7 +225,7 @@ function ShopPage() {
             <div className="mt-4 flex flex-wrap gap-2">
               <button
                 onClick={() => setCategory(null)}
-                className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
+                className={`rounded-md border px-3 py-1.5 text-sm font-medium transition-colors ${
                   category === null
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-card text-foreground"
@@ -237,7 +237,7 @@ function ShopPage() {
                 <button
                   key={item}
                   onClick={() => setCategory(item)}
-                  className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
+                  className={`rounded-md border px-3 py-1.5 text-sm font-medium transition-colors ${
                     category === item
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border bg-card text-foreground"
@@ -252,7 +252,7 @@ function ShopPage() {
           {productsQuery.isLoading ? (
             <p className="mt-8 text-sm text-muted-foreground">Chargement des produits...</p>
           ) : products.length === 0 ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-border p-8 text-center">
+            <div className="mt-8 rounded-lg border border-dashed border-border p-8 text-center">
               <Store className="mx-auto h-8 w-8 text-muted-foreground" />
               <p className="mt-3 text-sm text-muted-foreground">
                 Aucun produit ne correspond à ta recherche.
@@ -265,7 +265,7 @@ function ShopPage() {
                 return (
                   <article
                     key={product.id}
-                    className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card"
+                    className="flex flex-col overflow-hidden rounded-lg border border-border bg-card"
                   >
                     <div className="aspect-square overflow-hidden bg-secondary">
                       {product.images?.[0] ? (
@@ -309,7 +309,7 @@ function ShopPage() {
                               : `${product.name} ajouté au panier`,
                           );
                         }}
-                        className="mt-3 rounded-full bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
+                        className="mt-3 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
                       >
                         {soldOut ? "Indisponible" : "Ajouter au panier"}
                       </button>

@@ -49,7 +49,7 @@ export function ImageUploadField({
               type="button"
               onClick={() => onChange("")}
               aria-label="Retirer l'image"
-              className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground"
+              className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-md bg-destructive text-destructive-foreground"
             >
               <X className="h-3.5 w-3.5" />
             </button>

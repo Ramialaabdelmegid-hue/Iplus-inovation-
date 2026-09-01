@@ -139,12 +139,12 @@ function CartPage() {
         <h1 className="font-display text-2xl font-bold text-foreground sm:text-3xl">Mon panier</h1>
 
         {cart.items.length === 0 ? (
-          <div className="mt-8 rounded-2xl border border-dashed border-border p-10 text-center">
+          <div className="mt-8 rounded-lg border border-dashed border-border p-10 text-center">
             <ShoppingCart className="mx-auto h-8 w-8 text-muted-foreground" />
             <p className="mt-3 font-medium text-foreground">Ton panier est vide</p>
             <Link
               to="/"
-              className="mt-4 inline-flex rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+              className="mt-4 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
             >
               Voir les boutiques
             </Link>
@@ -158,7 +158,7 @@ function CartPage() {
               {cart.items.map((item) => (
                 <div
                   key={item.productId}
-                  className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3"
+                  className="flex items-center gap-3 rounded-lg border border-border bg-card p-3"
                 >
                   <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-secondary">
                     {item.image && (
@@ -178,7 +178,7 @@ function CartPage() {
                     <button
                       aria-label="Diminuer"
                       onClick={() => setQuantity(item.productId, item.quantity - 1)}
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border"
+                      className="flex h-8 w-8 items-center justify-center rounded-md border border-border"
                     >
                       <Minus className="h-4 w-4" />
                     </button>
@@ -186,14 +186,14 @@ function CartPage() {
                     <button
                       aria-label="Augmenter"
                       onClick={() => setQuantity(item.productId, item.quantity + 1)}
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border"
+                      className="flex h-8 w-8 items-center justify-center rounded-md border border-border"
                     >
                       <Plus className="h-4 w-4" />
                     </button>
                     <button
                       aria-label="Retirer"
                       onClick={() => removeItem(item.productId)}
-                      className="ml-1 flex h-8 w-8 items-center justify-center rounded-full text-destructive"
+                      className="ml-1 flex h-8 w-8 items-center justify-center rounded-md text-destructive"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -202,7 +202,7 @@ function CartPage() {
               ))}
             </section>
 
-            <aside className="rounded-2xl border border-border bg-card p-4">
+            <aside className="rounded-lg border border-border bg-card p-4">
               <h2 className="font-display text-lg font-bold text-foreground">Mes informations</h2>
               <div className="mt-4 space-y-3">
                 <input

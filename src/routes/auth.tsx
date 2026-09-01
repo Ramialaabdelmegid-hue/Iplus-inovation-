@@ -105,7 +105,7 @@ function AuthPage() {
   if (pendingEmail) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-secondary/40 px-4 py-10">
-        <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6 text-center shadow-sm">
+        <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 text-center shadow-sm">
           <h1 className="font-display text-2xl font-bold text-foreground">
             Vérifie ta boîte mail
           </h1>
@@ -131,7 +131,7 @@ function AuthPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-secondary/40 px-4 py-10">
-      <div className="w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-sm">
+      <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-sm">
         <Link to="/" className="flex items-center gap-2">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <ShoppingBag className="h-5 w-5" />
