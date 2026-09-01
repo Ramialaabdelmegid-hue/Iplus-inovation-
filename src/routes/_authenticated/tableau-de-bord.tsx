@@ -306,6 +306,10 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
             onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
             placeholder="+227 90 00 00 00"
           />
+          <span className="mt-1.5 block text-xs font-normal text-muted-foreground">
+            C'est ton propre numéro WhatsApp, les clients t'écriront directement dessus pour
+            leurs commandes.
+          </span>
         </label>
         <label className="text-sm">
           <span className="font-medium">Frais de livraison (FCFA)</span>
