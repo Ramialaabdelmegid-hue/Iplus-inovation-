@@ -10,13 +10,13 @@ import { fcfa } from "@/lib/format";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Iplus — Boutiques en ligne au Niger" },
+      { title: "Sahel Star — Boutiques en ligne au Niger" },
       {
         name: "description",
         content:
-          "Découvrez les boutiques de Iplus, commandez vos produits en FCFA et payez à la livraison. Commande envoyée directement sur WhatsApp.",
+          "Découvrez les boutiques de Sahel Star, commandez vos produits en FCFA et payez à la livraison. Commande envoyée directement sur WhatsApp.",
       },
-      { property: "og:title", content: "Iplus — Boutiques en ligne au Niger" },
+      { property: "og:title", content: "Sahel Star — Boutiques en ligne au Niger" },
       {
         property: "og:description",
         content:
@@ -111,7 +111,7 @@ function Home() {
       <main>
         <section className="border-b border-border/70 bg-secondary/50">
           <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
-            <p className="inline-flex items-center gap-2 rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
+            <p className="inline-flex items-center gap-2 rounded-md bg-accent/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
               Made in Niger
             </p>
             <h1 className="mt-4 max-w-2xl font-display text-3xl font-extrabold leading-tight tracking-tight text-foreground sm:text-5xl">
@@ -122,7 +122,7 @@ function Home() {
               de compte, et tu paies à la livraison.
             </p>
 
-            <div className="mt-8 flex items-center gap-2 rounded-2xl border border-border bg-card p-2 shadow-sm">
+            <div className="mt-8 flex items-center gap-2 rounded-lg border border-border bg-card p-2 shadow-sm">
               <Search className="ml-2 h-5 w-5 shrink-0 text-muted-foreground" />
               <input
                 value={term}
@@ -139,7 +139,7 @@ function Home() {
                   <button
                     key={category}
                     onClick={() => setTerm(category)}
-                    className="rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
+                    className="rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
                   >
                     {category}
                   </button>
@@ -158,7 +158,7 @@ function Home() {
           {shopsQuery.isLoading ? (
             <p className="mt-6 text-sm text-muted-foreground">Chargement des boutiques...</p>
           ) : shops.length === 0 ? (
-            <div className="mt-6 rounded-2xl border border-dashed border-border p-8 text-center">
+            <div className="mt-6 rounded-lg border border-dashed border-border p-8 text-center">
               <Store className="mx-auto h-8 w-8 text-muted-foreground" />
               <p className="mt-3 font-medium text-foreground">Aucune boutique pour le moment</p>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -166,7 +166,7 @@ function Home() {
               </p>
               <Link
                 to="/tableau-de-bord"
-                className="mt-4 inline-flex rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+                className="mt-4 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
               >
                 Ouvrir ma boutique
               </Link>
@@ -178,7 +178,7 @@ function Home() {
                   key={shop.id}
                   to="/boutique/$slug"
                   params={{ slug: shop.slug }}
-                  className="group rounded-2xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-md"
+                  className="group rounded-lg border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
                     {shop.logo_url ? (
@@ -227,7 +227,7 @@ function Home() {
                   key={product.id}
                   to="/boutique/$slug"
                   params={{ slug: product.shops?.slug ?? "" }}
-                  className="group overflow-hidden rounded-2xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-md"
+                  className="group overflow-hidden rounded-lg border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="aspect-square overflow-hidden bg-secondary">
                     {product.images?.[0] ? (
@@ -281,7 +281,7 @@ function Home() {
                   text: "Le commerçant reçoit ta commande et te livre.",
                 },
               ].map((step) => (
-                <div key={step.title} className="rounded-2xl border border-border bg-card p-5">
+                <div key={step.title} className="rounded-lg border border-border bg-card p-5">
                   <step.icon className="h-6 w-6 text-primary" />
                   <p className="mt-3 font-semibold text-foreground">{step.title}</p>
                   <p className="mt-1 text-sm text-muted-foreground">{step.text}</p>

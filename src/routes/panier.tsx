@@ -9,20 +9,21 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { useCart } from "@/lib/cart";
 import { fcfa } from "@/lib/format";
 import { buildWhatsAppMessage, whatsappLink } from "@/lib/whatsapp";
+import { customerOrderSchema, checkOrderRate, recordOrderSent } from "@/lib/validation";
 
 export const Route = createFileRoute("/panier")({
   head: () => ({
     meta: [
-      { title: "Mon panier — Iplus" },
+      { title: "Mon panier — Sahel Star" },
       {
         name: "description",
         content:
           "Vérifiez votre panier, renseignez votre quartier et envoyez votre commande sur WhatsApp. Paiement à la livraison.",
       },
-      { property: "og:title", content: "Mon panier — Iplus" },
+      { property: "og:title", content: "Mon panier — Sahel Star" },
       {
         property: "og:description",
-        content: "Commandez en quelques secondes et payez à la livraison avec Iplus.",
+        content: "Commandez en quelques secondes et payez à la livraison avec Sahel Star.",
       },
     ],
   }),
@@ -45,6 +46,7 @@ function CartPage() {
   const [quartier, setQuartier] = useState("");
   const [address, setAddress] = useState("");
   const [method, setMethod] = useState<"livraison" | "retrait">("livraison");
+  const [honeypot, setHoneypot] = useState("");
   const [sending, setSending] = useState(false);
 
   const shopQuery = useQuery({
@@ -67,12 +69,36 @@ function CartPage() {
 
   async function submit() {
     if (!shop || !cart.shopId) return;
-    if (!name.trim() || !phone.trim()) {
-      toast.error("Nom et téléphone obligatoires");
+
+    const parsed = customerOrderSchema.safeParse({
+      name,
+      phone,
+      quartier,
+      address,
+      method,
+      honeypot,
+    });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message ?? "Informations invalides");
       return;
     }
-    if (method === "livraison" && !quartier.trim()) {
+    const values = parsed.data;
+    if (values.method === "livraison" && values.quartier.length < 2) {
       toast.error("Indique ton quartier pour la livraison");
+      return;
+    }
+    if (cart.items.length === 0 || cart.items.length > 40) {
+      toast.error("Panier invalide.");
+      return;
+    }
+    if (cart.items.some((i) => i.quantity < 1 || i.quantity > 50)) {
+      toast.error("Quantité invalide (50 maximum par produit).");
+      return;
+    }
+
+    const rate = checkOrderRate();
+    if (!rate.ok) {
+      toast.error(rate.message ?? "Trop de tentatives.");
       return;
     }
 
@@ -84,11 +110,11 @@ function CartPage() {
         id: orderId,
         shop_id: cart.shopId,
         order_number: number,
-        customer_name: name.trim(),
-        customer_phone: phone.trim(),
-        quartier: quartier.trim() || null,
-        address: address.trim() || null,
-        delivery_method: method,
+        customer_name: values.name,
+        customer_phone: values.phone,
+        quartier: values.quartier || null,
+        address: values.address || null,
+        delivery_method: values.method,
         subtotal,
         delivery_fee: deliveryFee,
         total,
@@ -106,14 +132,16 @@ function CartPage() {
       );
       if (itemsError) throw itemsError;
 
+      recordOrderSent();
+
       const message = buildWhatsAppMessage({
         orderNumber: number,
         shopName: shop.name,
-        customerName: name.trim(),
-        phone: phone.trim(),
-        quartier: quartier.trim(),
-        address: address.trim(),
-        deliveryMethod: method === "livraison" ? "Livraison" : "Retrait en boutique",
+        customerName: values.name,
+        phone: values.phone,
+        quartier: values.quartier,
+        address: values.address,
+        deliveryMethod: values.method === "livraison" ? "Livraison" : "Retrait en boutique",
         items: cart.items.map((i) => ({ name: i.name, quantity: i.quantity, price: i.price })),
         subtotal,
         deliveryFee,
@@ -139,12 +167,12 @@ function CartPage() {
         <h1 className="font-display text-2xl font-bold text-foreground sm:text-3xl">Mon panier</h1>
 
         {cart.items.length === 0 ? (
-          <div className="mt-8 rounded-2xl border border-dashed border-border p-10 text-center">
+          <div className="mt-8 rounded-lg border border-dashed border-border p-10 text-center">
             <ShoppingCart className="mx-auto h-8 w-8 text-muted-foreground" />
             <p className="mt-3 font-medium text-foreground">Ton panier est vide</p>
             <Link
               to="/"
-              className="mt-4 inline-flex rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+              className="mt-4 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
             >
               Voir les boutiques
             </Link>
@@ -158,7 +186,7 @@ function CartPage() {
               {cart.items.map((item) => (
                 <div
                   key={item.productId}
-                  className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3"
+                  className="flex items-center gap-3 rounded-lg border border-border bg-card p-3"
                 >
                   <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-secondary">
                     {item.image && (
@@ -178,7 +206,7 @@ function CartPage() {
                     <button
                       aria-label="Diminuer"
                       onClick={() => setQuantity(item.productId, item.quantity - 1)}
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border"
+                      className="flex h-8 w-8 items-center justify-center rounded-md border border-border"
                     >
                       <Minus className="h-4 w-4" />
                     </button>
@@ -186,14 +214,14 @@ function CartPage() {
                     <button
                       aria-label="Augmenter"
                       onClick={() => setQuantity(item.productId, item.quantity + 1)}
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border"
+                      className="flex h-8 w-8 items-center justify-center rounded-md border border-border"
                     >
                       <Plus className="h-4 w-4" />
                     </button>
                     <button
                       aria-label="Retirer"
                       onClick={() => removeItem(item.productId)}
-                      className="ml-1 flex h-8 w-8 items-center justify-center rounded-full text-destructive"
+                      className="ml-1 flex h-8 w-8 items-center justify-center rounded-md text-destructive"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -202,21 +230,33 @@ function CartPage() {
               ))}
             </section>
 
-            <aside className="rounded-2xl border border-border bg-card p-4">
+            <aside className="rounded-lg border border-border bg-card p-4">
               <h2 className="font-display text-lg font-bold text-foreground">Mes informations</h2>
               <div className="mt-4 space-y-3">
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Nom complet"
-                  className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none focus:border-primary"
+                  maxLength={80}
+                  autoComplete="name"
+                  className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-primary"
                 />
                 <input
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Téléphone (ex : 90 00 00 00)"
                   inputMode="tel"
-                  className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none focus:border-primary"
+                  maxLength={20}
+                  autoComplete="tel"
+                  className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-primary"
+                />
+                <input
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="hidden"
                 />
                 <div className="grid grid-cols-2 gap-2">
                   {(["livraison", "retrait"] as const).map((option) => (

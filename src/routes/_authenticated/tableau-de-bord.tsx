@@ -19,13 +19,13 @@ import { ImageUploadField } from "@/components/ImageUploadField";
 export const Route = createFileRoute("/_authenticated/tableau-de-bord")({
   head: () => ({
     meta: [
-      { title: "Tableau de bord commerçant — Iplus" },
+      { title: "Tableau de bord commerçant — Sahel Star" },
       {
         name: "description",
         content:
-          "Gérez votre boutique Iplus : informations, produits, stock et suivi des commandes reçues.",
+          "Gérez votre boutique Sahel Star : informations, produits, stock et suivi des commandes reçues.",
       },
-      { property: "og:title", content: "Tableau de bord commerçant — Iplus" },
+      { property: "og:title", content: "Tableau de bord commerçant — Sahel Star" },
       {
         property: "og:description",
         content: "Boutique, produits et commandes : tout se gère depuis un seul écran.",
@@ -113,7 +113,7 @@ function DashboardPage() {
               <ShoppingBag className="h-5 w-5" />
             </span>
             <span className="font-display text-lg font-bold text-foreground">
-              I<span className="text-primary">plus</span>
+              Sahel <span className="text-primary">Star</span>
             </span>
           </Link>
           <div className="ml-auto flex items-center gap-2">
@@ -121,7 +121,7 @@ function DashboardPage() {
               <Link
                 to="/boutique/$slug"
                 params={{ slug: shop.slug }}
-                className="hidden items-center gap-1.5 rounded-full border border-border px-3 py-2 text-sm font-medium sm:flex"
+                className="hidden items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-medium sm:flex"
               >
                 <ExternalLink className="h-4 w-4" />
                 Voir ma boutique
@@ -129,7 +129,7 @@ function DashboardPage() {
             )}
             <button
               onClick={signOut}
-              className="flex items-center gap-1.5 rounded-full border border-border px-3 py-2 text-sm font-medium hover:bg-secondary"
+              className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-medium hover:bg-secondary"
             >
               <LogOut className="h-4 w-4" />
               Déconnexion
@@ -157,7 +157,7 @@ function DashboardPage() {
             <button
               key={key}
               onClick={() => setTab(key)}
-              className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+              className={`flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
                 tab === key
                   ? "bg-primary text-primary-foreground"
                   : "border border-border bg-background text-foreground hover:bg-secondary"
@@ -175,7 +175,7 @@ function DashboardPage() {
           ) : tab === "boutique" ? (
             <ShopForm shop={shop} onSaved={() => shopQuery.refetch()} />
           ) : !shop ? (
-            <div className="rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
+            <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
               Crée d'abord ta boutique dans l'onglet « Ma boutique ».
             </div>
           ) : tab === "produits" ? (
@@ -278,7 +278,7 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-6">
+    <div className="rounded-lg border border-border bg-card p-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="text-sm">
           <span className="font-medium">Nom de la boutique *</span>
@@ -306,6 +306,10 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
             onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
             placeholder="+227 90 00 00 00"
           />
+          <span className="mt-1.5 block text-xs font-normal text-muted-foreground">
+            C'est ton propre numéro WhatsApp, les clients t'écriront directement dessus pour
+            leurs commandes.
+          </span>
         </label>
         <label className="text-sm">
           <span className="font-medium">Frais de livraison (FCFA)</span>
@@ -456,7 +460,7 @@ function ProductsPanel({ shopId }: { shopId: string }) {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-border bg-card p-6">
+      <div className="rounded-lg border border-border bg-card p-6">
         <h2 className="font-display text-lg font-bold text-foreground">Ajouter un produit</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <input
@@ -512,7 +516,7 @@ function ProductsPanel({ shopId }: { shopId: string }) {
         </button>
       </div>
 
-      <div className="rounded-2xl border border-border bg-card p-6">
+      <div className="rounded-lg border border-border bg-card p-6">
         <h2 className="font-display text-lg font-bold text-foreground">
           Mes produits ({productsQuery.data?.length ?? 0})
         </h2>
@@ -601,7 +605,7 @@ function OrdersPanel({ shopId }: { shopId: string }) {
 
   if (!ordersQuery.data?.length) {
     return (
-      <div className="rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
+      <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
         Aucune commande reçue pour le moment.
       </div>
     );
@@ -612,7 +616,7 @@ function OrdersPanel({ shopId }: { shopId: string }) {
       {ordersQuery.data.map((order) => {
         const next = nextStatus(order.status);
         return (
-          <div key={order.id} className="rounded-2xl border border-border bg-card p-5">
+          <div key={order.id} className="rounded-lg border border-border bg-card p-5">
             <div className="flex flex-wrap items-center gap-3">
               <div>
                 <p className="font-display text-base font-bold text-foreground">
@@ -622,7 +626,7 @@ function OrdersPanel({ shopId }: { shopId: string }) {
                   {new Date(order.created_at).toLocaleString("fr-FR")}
                 </p>
               </div>
-              <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-foreground">
+              <span className="rounded-md bg-secondary px-3 py-1 text-xs font-semibold text-foreground">
                 {ORDER_STATUS_LABELS[order.status] ?? order.status}
               </span>
               <span className="ml-auto font-display text-base font-bold text-primary">

@@ -13,14 +13,14 @@ export function SiteHeader() {
             <ShoppingBag className="h-5 w-5" />
           </span>
           <span className="font-display text-lg font-bold tracking-tight text-foreground">
-            I<span className="text-primary">plus</span>
+            Sahel <span className="text-primary">Star</span>
           </span>
         </Link>
 
         <div className="ml-auto flex items-center gap-2">
           <Link
             to="/tableau-de-bord"
-            className="flex items-center gap-1.5 rounded-full border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+            className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
           >
             <Store className="h-4 w-4" />
             <span className="hidden sm:inline">Espace commerçant</span>
@@ -28,11 +28,11 @@ export function SiteHeader() {
           </Link>
           <Link
             to="/panier"
-            className="relative flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            className="relative flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
           >
             Panier
             {count > 0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-bold text-accent-foreground">
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-md bg-accent px-1 text-xs font-bold text-accent-foreground">
                 {count}
               </span>
             )}

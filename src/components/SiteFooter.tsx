@@ -6,7 +6,7 @@ export function SiteFooter() {
       <div className="mx-auto max-w-6xl px-4 py-10 text-sm text-muted-foreground">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="font-display text-base font-bold text-foreground">
-            I<span className="text-primary">plus</span>
+            Sahel <span className="text-primary">Star</span>
           </p>
           <div className="flex gap-4">
             <Link to="/" className="hover:text-foreground">

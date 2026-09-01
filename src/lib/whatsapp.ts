@@ -16,7 +16,7 @@ export type WhatsAppOrder = {
 
 export function buildWhatsAppMessage(order: WhatsAppOrder): string {
   const lines: string[] = [];
-  lines.push(`*Nouvelle commande Iplus*`);
+  lines.push(`*Nouvelle commande Sahel Star*`);
   lines.push(`Boutique : ${order.shopName}`);
   lines.push(`Commande n° ${order.orderNumber}`);
   lines.push("");
