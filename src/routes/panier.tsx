@@ -45,6 +45,7 @@ function CartPage() {
   const [quartier, setQuartier] = useState("");
   const [address, setAddress] = useState("");
   const [method, setMethod] = useState<"livraison" | "retrait">("livraison");
+  const [honeypot, setHoneypot] = useState("");
   const [sending, setSending] = useState(false);
 
   const shopQuery = useQuery({
@@ -67,12 +68,36 @@ function CartPage() {
 
   async function submit() {
     if (!shop || !cart.shopId) return;
-    if (!name.trim() || !phone.trim()) {
-      toast.error("Nom et téléphone obligatoires");
+
+    const parsed = customerOrderSchema.safeParse({
+      name,
+      phone,
+      quartier,
+      address,
+      method,
+      honeypot,
+    });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message ?? "Informations invalides");
       return;
     }
-    if (method === "livraison" && !quartier.trim()) {
+    const values = parsed.data;
+    if (values.method === "livraison" && values.quartier.length < 2) {
       toast.error("Indique ton quartier pour la livraison");
+      return;
+    }
+    if (cart.items.length === 0 || cart.items.length > 40) {
+      toast.error("Panier invalide.");
+      return;
+    }
+    if (cart.items.some((i) => i.quantity < 1 || i.quantity > 50)) {
+      toast.error("Quantité invalide (50 maximum par produit).");
+      return;
+    }
+
+    const rate = checkOrderRate();
+    if (!rate.ok) {
+      toast.error(rate.message ?? "Trop de tentatives.");
       return;
     }
 
@@ -84,11 +109,11 @@ function CartPage() {
         id: orderId,
         shop_id: cart.shopId,
         order_number: number,
-        customer_name: name.trim(),
-        customer_phone: phone.trim(),
-        quartier: quartier.trim() || null,
-        address: address.trim() || null,
-        delivery_method: method,
+        customer_name: values.name,
+        customer_phone: values.phone,
+        quartier: values.quartier || null,
+        address: values.address || null,
+        delivery_method: values.method,
         subtotal,
         delivery_fee: deliveryFee,
         total,
@@ -106,14 +131,16 @@ function CartPage() {
       );
       if (itemsError) throw itemsError;
 
+      recordOrderSent();
+
       const message = buildWhatsAppMessage({
         orderNumber: number,
         shopName: shop.name,
-        customerName: name.trim(),
-        phone: phone.trim(),
-        quartier: quartier.trim(),
-        address: address.trim(),
-        deliveryMethod: method === "livraison" ? "Livraison" : "Retrait en boutique",
+        customerName: values.name,
+        phone: values.phone,
+        quartier: values.quartier,
+        address: values.address,
+        deliveryMethod: values.method === "livraison" ? "Livraison" : "Retrait en boutique",
         items: cart.items.map((i) => ({ name: i.name, quantity: i.quantity, price: i.price })),
         subtotal,
         deliveryFee,
