@@ -214,7 +214,7 @@ function AuthPage() {
                 onChange={(e) => setFullName(e.target.value)}
                 maxLength={80}
                 autoComplete="name"
-                placeholder="Rami Alaa"
+                placeholder="Aïcha Moussa"
                 className={`${inputClass} mt-1.5`}
               />
             </label>
@@ -251,7 +251,7 @@ function AuthPage() {
                   value={shopName}
                   onChange={(e) => setShopName(e.target.value)}
                   maxLength={60}
-                  placeholder="Boutique Rami"
+                  placeholder="Boutique Aïcha"
                   className={`${inputClass} mt-1.5`}
                 />
               </label>
