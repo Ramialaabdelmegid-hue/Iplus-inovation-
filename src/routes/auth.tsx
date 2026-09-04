@@ -251,6 +251,7 @@ function AuthPage() {
                   value={shopName}
                   onChange={(e) => setShopName(e.target.value)}
                   maxLength={60}
+                  autoComplete="off"
                   placeholder="Boutique Aïcha"
                   className={`${inputClass} mt-1.5`}
                 />
