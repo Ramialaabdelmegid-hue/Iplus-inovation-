@@ -286,7 +286,7 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
             className={`${inputClass} mt-1`}
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            placeholder="Boutique Rami"
+            placeholder="Boutique Aïcha"
           />
         </label>
         <label className="text-sm">
@@ -295,7 +295,7 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
             className={`${inputClass} mt-1`}
             value={form.slug}
             onChange={(e) => setForm({ ...form, slug: e.target.value })}
-            placeholder="boutique-rami"
+            placeholder="boutique-aicha"
           />
         </label>
         <label className="text-sm">
