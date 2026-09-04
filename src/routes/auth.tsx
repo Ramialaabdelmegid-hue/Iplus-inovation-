@@ -213,7 +213,7 @@ function AuthPage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 maxLength={80}
-                autoComplete="name"
+                autoComplete="off"
                 placeholder="Aïcha Moussa"
                 className={`${inputClass} mt-1.5`}
               />
