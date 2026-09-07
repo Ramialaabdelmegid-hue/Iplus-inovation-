@@ -192,6 +192,44 @@ export type Database = {
         }
         Relationships: []
       }
+      shop_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          customer_name: string
+          id: string
+          rating: number
+          shop_id: string
+          updated_at: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          customer_name: string
+          id?: string
+          rating: number
+          shop_id: string
+          updated_at?: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          customer_name?: string
+          id?: string
+          rating?: number
+          shop_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_reviews_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shops: {
         Row: {
           city: string | null
@@ -203,6 +241,7 @@ export type Database = {
           is_active: boolean
           logo_url: string | null
           name: string
+          opening_hours: string | null
           owner_id: string
           quartier: string | null
           slug: string
@@ -219,6 +258,7 @@ export type Database = {
           is_active?: boolean
           logo_url?: string | null
           name: string
+          opening_hours?: string | null
           owner_id: string
           quartier?: string | null
           slug: string
@@ -235,6 +275,7 @@ export type Database = {
           is_active?: boolean
           logo_url?: string | null
           name?: string
+          opening_hours?: string | null
           owner_id?: string
           quartier?: string | null
           slug?: string
