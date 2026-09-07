@@ -9,6 +9,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { fcfa } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { fetchShopSeo } from "@/lib/shop-seo";
+import { ShareShopButton } from "@/components/ShareShopButton";
+
 
 export const Route = createFileRoute("/boutique/$slug")({
   loader: async ({ params }) => ({ seo: await fetchShopSeo(params.slug) }),
@@ -205,7 +207,17 @@ function ShopPage() {
                 Livraison : {fcfa(shop.delivery_fee)}
                 {shop.delivery_info ? ` — ${shop.delivery_info}` : ""}
               </p>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold">
+                <span className="rounded-md bg-accent/15 px-2.5 py-1 text-accent">
+                  Paiement à la livraison
+                </span>
+                <span className="rounded-md bg-primary/10 px-2.5 py-1 text-primary">
+                  Commande sur WhatsApp
+                </span>
+              </div>
+              <ShareShopButton slug={shop.slug} name={shop.name} className="mt-4" />
             </div>
+
           </div>
         </section>
 

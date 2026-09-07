@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { fcfa, slugify, ORDER_STATUS_LABELS, nextStatus } from "@/lib/format";
+import { ShareShopButton } from "@/components/ShareShopButton";
+
 import { ImageUploadField } from "@/components/ImageUploadField";
 
 export const Route = createFileRoute("/_authenticated/tableau-de-bord")({
@@ -145,6 +147,17 @@ function DashboardPage() {
         <p className="mt-1 text-sm text-muted-foreground">
           {shop ? shop.name : "Crée ta boutique pour commencer à vendre."}
         </p>
+
+        {shop?.slug && (
+          <div className="mt-4 rounded-lg border border-border bg-background p-4">
+            <p className="text-sm font-semibold text-foreground">Partage ta boutique</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Envoie ce lien à tes clients sur WhatsApp, Facebook ou TikTok.
+            </p>
+            <ShareShopButton slug={shop.slug} name={shop.name} className="mt-3" />
+          </div>
+        )}
+
 
         <div className="mt-6 flex flex-wrap gap-2">
           {(
