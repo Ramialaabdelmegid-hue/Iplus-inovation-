@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as DevenirCommercantRouteImport } from './routes/devenir-commercant'
 import { Route as PanierRouteImport } from './routes/panier'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedTableauDeBordRouteImport } from './routes/_authenticated/tableau-de-bord'
@@ -29,6 +30,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevenirCommercantRoute = DevenirCommercantRouteImport.update({
+  id: '/devenir-commercant',
+  path: '/devenir-commercant',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PanierRoute = PanierRouteImport.update({
@@ -56,6 +62,7 @@ const BoutiqueSlugRoute = BoutiqueSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/devenir-commercant': typeof DevenirCommercantRoute
   '/panier': typeof PanierRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/devenir-commercant': typeof DevenirCommercantRoute
   '/panier': typeof PanierRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
@@ -74,6 +82,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/devenir-commercant': typeof DevenirCommercantRoute
   '/panier': typeof PanierRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
@@ -84,6 +93,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/devenir-commercant'
     | '/panier'
     | '/sitemap.xml'
     | '/tableau-de-bord'
@@ -92,6 +102,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/devenir-commercant'
     | '/panier'
     | '/sitemap.xml'
     | '/tableau-de-bord'
@@ -101,6 +112,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/devenir-commercant'
     | '/panier'
     | '/sitemap.xml'
     | '/_authenticated/tableau-de-bord'
@@ -111,6 +123,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  DevenirCommercantRoute: typeof DevenirCommercantRoute
   PanierRoute: typeof PanierRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   BoutiqueSlugRoute: typeof BoutiqueSlugRoute
@@ -137,6 +150,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/devenir-commercant': {
+      id: '/devenir-commercant'
+      path: '/devenir-commercant'
+      fullPath: '/devenir-commercant'
+      preLoaderRoute: typeof DevenirCommercantRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/panier': {
@@ -185,6 +205,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  DevenirCommercantRoute: DevenirCommercantRoute,
   PanierRoute: PanierRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   BoutiqueSlugRoute: BoutiqueSlugRoute,
