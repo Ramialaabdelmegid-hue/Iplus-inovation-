@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { fcfa } from "@/lib/format";
+import heroImage from "@/assets/hero-sahel.jpg";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -49,6 +51,8 @@ type Product = {
 
 function Home() {
   const [term, setTerm] = useState("");
+  const [city, setCity] = useState<string | null>(null);
+
 
   const shopsQuery = useQuery({
     queryKey: ["home-shops"],
@@ -80,15 +84,23 @@ function Home() {
 
   const search = term.trim().toLowerCase();
 
+  const cities = useMemo(() => {
+    const set = new Set<string>();
+    for (const s of shopsQuery.data ?? []) if (s.city) set.add(s.city);
+    return Array.from(set).sort();
+  }, [shopsQuery.data]);
+
   const shops = useMemo(() => {
-    const list = shopsQuery.data ?? [];
+    let list = shopsQuery.data ?? [];
+    if (city) list = list.filter((s) => s.city === city);
     if (!search) return list;
     return list.filter((s) =>
       [s.name, s.city, s.quartier, s.description].some((v) =>
         (v ?? "").toLowerCase().includes(search),
       ),
     );
-  }, [shopsQuery.data, search]);
+  }, [shopsQuery.data, search, city]);
+
 
   const products = useMemo(() => {
     const list = productsQuery.data ?? [];
@@ -109,20 +121,44 @@ function Home() {
       <SiteHeader />
 
       <main>
-        <section className="border-b border-border/70 bg-secondary/50">
-          <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
-            <p className="inline-flex items-center gap-2 rounded-md bg-accent/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
+        <section className="relative overflow-hidden border-b border-border/70">
+          <img
+            src={heroImage}
+            alt="Marché animé à Niamey, au Niger"
+            width={1600}
+            height={1008}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-foreground/70" />
+          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:py-24">
+            <p className="inline-flex items-center gap-2 rounded-md bg-background/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-background backdrop-blur">
               Made in Niger
             </p>
-            <h1 className="mt-4 max-w-2xl font-display text-3xl font-extrabold leading-tight tracking-tight text-foreground sm:text-5xl">
+            <h1 className="mt-4 max-w-2xl font-display text-3xl font-extrabold leading-tight tracking-tight text-background sm:text-5xl">
               Toutes les boutiques du quartier, dans ton téléphone.
             </h1>
-            <p className="mt-4 max-w-xl text-base text-muted-foreground">
+            <p className="mt-4 max-w-xl text-base text-background/80">
               Trouve une boutique, choisis tes produits, commande en quelques secondes. Sans créer
               de compte, et tu paies à la livraison.
             </p>
 
-            <div className="mt-8 flex items-center gap-2 rounded-lg border border-border bg-card p-2 shadow-sm">
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link
+                to="/auth"
+                className="inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 text-sm font-bold text-accent-foreground transition-opacity hover:opacity-90"
+              >
+                <Store className="h-4 w-4" />
+                Crée ta boutique gratuitement
+              </Link>
+              <a
+                href="#boutiques"
+                className="inline-flex items-center gap-2 rounded-md border border-background/40 bg-background/10 px-5 py-3 text-sm font-semibold text-background backdrop-blur transition-colors hover:bg-background/20"
+              >
+                Voir les boutiques
+              </a>
+            </div>
+
+            <div className="mt-8 flex items-center gap-2 rounded-lg border border-border bg-card p-2 shadow-lg">
               <Search className="ml-2 h-5 w-5 shrink-0 text-muted-foreground" />
               <input
                 value={term}
@@ -133,13 +169,27 @@ function Home() {
               />
             </div>
 
-            {categories.length > 0 && (
+            {(cities.length > 0 || categories.length > 0) && (
               <div className="mt-4 flex flex-wrap gap-2">
+                {cities.map((item) => (
+                  <button
+                    key={`ville-${item}`}
+                    onClick={() => setCity(city === item ? null : item)}
+                    className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                      city === item
+                        ? "bg-accent text-accent-foreground"
+                        : "border border-background/40 bg-background/10 text-background backdrop-blur hover:bg-background/20"
+                    }`}
+                  >
+                    <MapPin className="h-3.5 w-3.5" />
+                    {item}
+                  </button>
+                ))}
                 {categories.map((category) => (
                   <button
                     key={category}
                     onClick={() => setTerm(category)}
-                    className="rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
+                    className="rounded-md border border-background/40 bg-background/10 px-3 py-1.5 text-sm font-medium text-background backdrop-blur transition-colors hover:bg-background/20"
                   >
                     {category}
                   </button>
@@ -149,7 +199,8 @@ function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-6xl px-4 py-12">
+        <section id="boutiques" className="mx-auto max-w-6xl px-4 py-12">
+
           <div className="flex items-end justify-between gap-4">
             <h2 className="font-display text-2xl font-bold text-foreground">Boutiques</h2>
             <span className="text-sm text-muted-foreground">{shops.length} boutique(s)</span>
