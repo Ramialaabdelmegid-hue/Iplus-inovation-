@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   ExternalLink,
@@ -11,12 +11,15 @@ import {
   Plus,
   Trash2,
   ShoppingBag,
+  BarChart3,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { fcfa, slugify, ORDER_STATUS_LABELS, nextStatus } from "@/lib/format";
 import { ShareShopButton } from "@/components/ShareShopButton";
 
 import { ImageUploadField } from "@/components/ImageUploadField";
+import { MultiImageUploadField } from "@/components/MultiImageUploadField";
+
 
 export const Route = createFileRoute("/_authenticated/tableau-de-bord")({
   head: () => ({
