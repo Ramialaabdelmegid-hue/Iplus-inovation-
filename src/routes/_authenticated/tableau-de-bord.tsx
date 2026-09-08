@@ -198,9 +198,12 @@ function DashboardPage() {
             </div>
           ) : tab === "produits" ? (
             <ProductsPanel shopId={shop.id} />
+          ) : tab === "stats" ? (
+            <StatsPanel shopId={shop.id} />
           ) : (
             <OrdersPanel shopId={shop.id} />
           )}
+
         </div>
       </main>
     </div>
