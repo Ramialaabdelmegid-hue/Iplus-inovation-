@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { MapPin, Search, Store, Truck } from "lucide-react";
+import { Clock, MapPin, Search, Store, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -10,6 +10,9 @@ import { fcfa } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { fetchShopSeo } from "@/lib/shop-seo";
 import { ShareShopButton } from "@/components/ShareShopButton";
+import { ShopReviews } from "@/components/ShopReviews";
+import { ProductGallery } from "@/components/ProductGallery";
+
 
 
 export const Route = createFileRoute("/boutique/$slug")({
@@ -74,7 +77,9 @@ type Shop = {
   quartier: string | null;
   delivery_info: string | null;
   delivery_fee: number;
+  opening_hours: string | null;
 };
+
 
 type Product = {
   id: string;
