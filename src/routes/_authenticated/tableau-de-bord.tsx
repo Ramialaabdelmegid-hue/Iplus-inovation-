@@ -40,7 +40,7 @@ export const Route = createFileRoute("/_authenticated/tableau-de-bord")({
   component: DashboardPage,
 });
 
-type Tab = "boutique" | "produits" | "commandes";
+type Tab = "boutique" | "produits" | "commandes" | "stats";
 
 const inputClass =
   "h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none focus:border-primary";
@@ -168,8 +168,10 @@ function DashboardPage() {
               ["boutique", "Ma boutique", Store],
               ["produits", "Produits", Package],
               ["commandes", "Commandes", ClipboardList],
+              ["stats", "Statistiques", BarChart3],
             ] as const
           ).map(([key, label, Icon]) => (
+
             <button
               key={key}
               onClick={() => setTab(key)}
