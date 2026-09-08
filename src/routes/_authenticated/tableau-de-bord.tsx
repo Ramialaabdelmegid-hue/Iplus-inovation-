@@ -278,7 +278,9 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
         delivery_info: form.delivery_info.trim() || null,
         delivery_fee: Number(form.delivery_fee) || 0,
         logo_url: form.logo_url.trim() || null,
+        opening_hours: form.opening_hours.trim() || null,
         is_active: form.is_active,
+
       };
 
       if (shop) {
