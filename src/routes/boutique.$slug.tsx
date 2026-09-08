@@ -215,6 +215,13 @@ function ShopPage() {
                 Livraison : {fcfa(shop.delivery_fee)}
                 {shop.delivery_info ? ` — ${shop.delivery_info}` : ""}
               </p>
+              {shop.opening_hours && (
+                <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+                  Horaires : {shop.opening_hours}
+                </p>
+              )}
+
               <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold">
                 <span className="rounded-md bg-accent/15 px-2.5 py-1 text-accent">
                   Paiement à la livraison
