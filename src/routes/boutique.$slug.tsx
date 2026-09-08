@@ -294,20 +294,8 @@ function ShopPage() {
                     key={product.id}
                     className="flex flex-col overflow-hidden rounded-lg border border-border bg-card"
                   >
-                    <div className="aspect-square overflow-hidden bg-secondary">
-                      {product.images?.[0] ? (
-                        <img
-                          src={product.images[0]}
-                          alt={product.name}
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center text-muted-foreground">
-                          <Store className="h-8 w-8" />
-                        </div>
-                      )}
-                    </div>
+                    <ProductGallery images={product.images ?? []} name={product.name} />
+
                     <div className="flex flex-1 flex-col p-3">
                       <p className="text-sm font-semibold text-foreground">{product.name}</p>
                       {product.description && (
