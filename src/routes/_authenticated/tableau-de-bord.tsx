@@ -221,7 +221,9 @@ type Shop = {
   delivery_info: string | null;
   delivery_fee: number;
   logo_url: string | null;
+  opening_hours: string | null;
   is_active: boolean;
+
 };
 
 function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void }) {
