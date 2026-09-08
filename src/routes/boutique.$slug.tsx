@@ -103,7 +103,10 @@ function ShopPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("shops")
-        .select("id, name, slug, logo_url, description, city, quartier, delivery_info, delivery_fee")
+        .select(
+          "id, name, slug, logo_url, description, city, quartier, delivery_info, delivery_fee, opening_hours",
+        )
+
         .eq("slug", slug)
         .eq("is_active", true)
         .maybeSingle();
