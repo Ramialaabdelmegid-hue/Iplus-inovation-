@@ -376,7 +376,21 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
           className="sm:col-span-2"
         />
         <label className="text-sm sm:col-span-2">
+        <label className="text-sm sm:col-span-2">
+          <span className="font-medium">Horaires d'ouverture</span>
+          <input
+            className={`${inputClass} mt-1`}
+            value={form.opening_hours}
+            onChange={(e) => setForm({ ...form, opening_hours: e.target.value })}
+            placeholder="Lun-Sam 8h-19h, Dim fermé"
+          />
+          <span className="mt-1.5 block text-xs font-normal text-muted-foreground">
+            Affiché sur ta page publique pour que les clients sachent quand tu réponds.
+          </span>
+        </label>
+        <label className="text-sm sm:col-span-2">
           <span className="font-medium">Description</span>
+
           <textarea
             rows={3}
             className="mt-1 w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:border-primary"
