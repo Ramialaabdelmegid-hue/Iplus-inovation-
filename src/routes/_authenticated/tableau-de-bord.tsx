@@ -237,7 +237,9 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
     delivery_info: "",
     delivery_fee: 0,
     logo_url: "",
+    opening_hours: "",
     is_active: true,
+
   });
   const [saving, setSaving] = useState(false);
 
