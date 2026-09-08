@@ -15,9 +15,13 @@ export function SiteFooter() {
             <Link to="/panier" className="hover:text-foreground">
               Panier
             </Link>
+            <Link to="/devenir-commercant" className="hover:text-foreground">
+              Devenir commerçant
+            </Link>
             <Link to="/tableau-de-bord" className="hover:text-foreground">
               Espace commerçant
             </Link>
+
           </div>
         </div>
         <p className="mt-4">

@@ -156,6 +156,13 @@ function Home() {
               >
                 Voir les boutiques
               </a>
+              <Link
+                to="/devenir-commercant"
+                className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-sm font-semibold text-background underline underline-offset-4 transition-opacity hover:opacity-80"
+              >
+                Comment ça marche ?
+              </Link>
+
             </div>
 
             <div className="mt-8 flex items-center gap-2 rounded-lg border border-border bg-card p-2 shadow-lg">

@@ -19,6 +19,12 @@ export function SiteHeader() {
 
         <div className="ml-auto flex items-center gap-2">
           <Link
+            to="/devenir-commercant"
+            className="hidden items-center rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:flex"
+          >
+            Devenir commerçant
+          </Link>
+          <Link
             to="/tableau-de-bord"
             className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
           >
@@ -26,6 +32,7 @@ export function SiteHeader() {
             <span className="hidden sm:inline">Espace commerçant</span>
             <span className="sm:hidden">Boutique</span>
           </Link>
+
           <Link
             to="/panier"
             className="relative flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
