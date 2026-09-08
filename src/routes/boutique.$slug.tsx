@@ -335,7 +335,10 @@ function ShopPage() {
             </div>
           )}
         </section>
+
+        <ShopReviews shopId={shop.id} />
       </main>
+
 
       <SiteFooter />
     </div>
