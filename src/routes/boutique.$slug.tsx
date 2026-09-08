@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { MapPin, Search, Store, Truck } from "lucide-react";
+import { Clock, MapPin, Search, Store, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -10,6 +10,9 @@ import { fcfa } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { fetchShopSeo } from "@/lib/shop-seo";
 import { ShareShopButton } from "@/components/ShareShopButton";
+import { ShopReviews } from "@/components/ShopReviews";
+import { ProductGallery } from "@/components/ProductGallery";
+
 
 
 export const Route = createFileRoute("/boutique/$slug")({
@@ -74,7 +77,9 @@ type Shop = {
   quartier: string | null;
   delivery_info: string | null;
   delivery_fee: number;
+  opening_hours: string | null;
 };
+
 
 type Product = {
   id: string;
@@ -98,7 +103,10 @@ function ShopPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("shops")
-        .select("id, name, slug, logo_url, description, city, quartier, delivery_info, delivery_fee")
+        .select(
+          "id, name, slug, logo_url, description, city, quartier, delivery_info, delivery_fee, opening_hours",
+        )
+
         .eq("slug", slug)
         .eq("is_active", true)
         .maybeSingle();
@@ -207,6 +215,13 @@ function ShopPage() {
                 Livraison : {fcfa(shop.delivery_fee)}
                 {shop.delivery_info ? ` — ${shop.delivery_info}` : ""}
               </p>
+              {shop.opening_hours && (
+                <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+                  Horaires : {shop.opening_hours}
+                </p>
+              )}
+
               <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold">
                 <span className="rounded-md bg-accent/15 px-2.5 py-1 text-accent">
                   Paiement à la livraison
@@ -279,20 +294,8 @@ function ShopPage() {
                     key={product.id}
                     className="flex flex-col overflow-hidden rounded-lg border border-border bg-card"
                   >
-                    <div className="aspect-square overflow-hidden bg-secondary">
-                      {product.images?.[0] ? (
-                        <img
-                          src={product.images[0]}
-                          alt={product.name}
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center text-muted-foreground">
-                          <Store className="h-8 w-8" />
-                        </div>
-                      )}
-                    </div>
+                    <ProductGallery images={product.images ?? []} name={product.name} />
+
                     <div className="flex flex-1 flex-col p-3">
                       <p className="text-sm font-semibold text-foreground">{product.name}</p>
                       {product.description && (
@@ -332,7 +335,10 @@ function ShopPage() {
             </div>
           )}
         </section>
+
+        <ShopReviews shopId={shop.id} />
       </main>
+
 
       <SiteFooter />
     </div>

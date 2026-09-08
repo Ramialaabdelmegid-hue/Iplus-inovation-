@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   ExternalLink,
@@ -11,12 +11,15 @@ import {
   Plus,
   Trash2,
   ShoppingBag,
+  BarChart3,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { fcfa, slugify, ORDER_STATUS_LABELS, nextStatus } from "@/lib/format";
 import { ShareShopButton } from "@/components/ShareShopButton";
 
 import { ImageUploadField } from "@/components/ImageUploadField";
+import { MultiImageUploadField } from "@/components/MultiImageUploadField";
+
 
 export const Route = createFileRoute("/_authenticated/tableau-de-bord")({
   head: () => ({
@@ -37,7 +40,7 @@ export const Route = createFileRoute("/_authenticated/tableau-de-bord")({
   component: DashboardPage,
 });
 
-type Tab = "boutique" | "produits" | "commandes";
+type Tab = "boutique" | "produits" | "commandes" | "stats";
 
 const inputClass =
   "h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none focus:border-primary";
@@ -165,8 +168,10 @@ function DashboardPage() {
               ["boutique", "Ma boutique", Store],
               ["produits", "Produits", Package],
               ["commandes", "Commandes", ClipboardList],
+              ["stats", "Statistiques", BarChart3],
             ] as const
           ).map(([key, label, Icon]) => (
+
             <button
               key={key}
               onClick={() => setTab(key)}
@@ -193,9 +198,12 @@ function DashboardPage() {
             </div>
           ) : tab === "produits" ? (
             <ProductsPanel shopId={shop.id} />
+          ) : tab === "stats" ? (
+            <StatsPanel shopId={shop.id} />
           ) : (
             <OrdersPanel shopId={shop.id} />
           )}
+
         </div>
       </main>
     </div>
@@ -213,7 +221,9 @@ type Shop = {
   delivery_info: string | null;
   delivery_fee: number;
   logo_url: string | null;
+  opening_hours: string | null;
   is_active: boolean;
+
 };
 
 function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void }) {
@@ -227,7 +237,9 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
     delivery_info: "",
     delivery_fee: 0,
     logo_url: "",
+    opening_hours: "",
     is_active: true,
+
   });
   const [saving, setSaving] = useState(false);
 
@@ -243,7 +255,9 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
       delivery_info: shop.delivery_info ?? "",
       delivery_fee: shop.delivery_fee,
       logo_url: shop.logo_url ?? "",
+      opening_hours: shop.opening_hours ?? "",
       is_active: shop.is_active,
+
     });
   }, [shop]);
 
@@ -264,7 +278,9 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
         delivery_info: form.delivery_info.trim() || null,
         delivery_fee: Number(form.delivery_fee) || 0,
         logo_url: form.logo_url.trim() || null,
+        opening_hours: form.opening_hours.trim() || null,
         is_active: form.is_active,
+
       };
 
       if (shop) {
@@ -360,7 +376,21 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
           className="sm:col-span-2"
         />
         <label className="text-sm sm:col-span-2">
+        <label className="text-sm sm:col-span-2">
+          <span className="font-medium">Horaires d'ouverture</span>
+          <input
+            className={`${inputClass} mt-1`}
+            value={form.opening_hours}
+            onChange={(e) => setForm({ ...form, opening_hours: e.target.value })}
+            placeholder="Lun-Sam 8h-19h, Dim fermé"
+          />
+          <span className="mt-1.5 block text-xs font-normal text-muted-foreground">
+            Affiché sur ta page publique pour que les clients sachent quand tu réponds.
+          </span>
+        </label>
+        <label className="text-sm sm:col-span-2">
           <span className="font-medium">Description</span>
+
           <textarea
             rows={3}
             className="mt-1 w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:border-primary"
