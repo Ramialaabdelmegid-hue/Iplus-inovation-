@@ -255,7 +255,9 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
       delivery_info: shop.delivery_info ?? "",
       delivery_fee: shop.delivery_fee,
       logo_url: shop.logo_url ?? "",
+      opening_hours: shop.opening_hours ?? "",
       is_active: shop.is_active,
+
     });
   }, [shop]);
 
