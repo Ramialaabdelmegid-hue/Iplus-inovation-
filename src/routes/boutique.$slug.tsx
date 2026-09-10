@@ -90,6 +90,7 @@ type Product = {
   stock: number;
   is_available: boolean;
   images: string[];
+  video_url: string | null;
 };
 
 function ShopPage() {

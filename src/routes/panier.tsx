@@ -154,7 +154,12 @@ function CartPage() {
       navigate({ to: "/boutique/$slug", params: { slug: shop.slug } });
     } catch (error) {
       console.error(error);
-      toast.error("Impossible d'envoyer la commande. Réessaie.");
+      const raw = error instanceof Error ? error.message : "";
+      if (/stock insuffisant/i.test(raw) || /prix/i.test(raw) || /indisponible/i.test(raw)) {
+        toast.error(raw);
+      } else {
+        toast.error("Impossible d'envoyer la commande. Réessaie.");
+      }
     } finally {
       setSending(false);
     }
