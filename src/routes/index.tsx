@@ -318,37 +318,88 @@ function Home() {
         </section>
 
         <section className="border-y border-border/70 bg-secondary/40">
-          <div className="mx-auto max-w-6xl px-4 py-12">
-            <h2 className="font-display text-2xl font-bold text-foreground">Comment commander ?</h2>
-            <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          <div className="mx-auto max-w-6xl px-4 py-20">
+            <h2 className="text-center font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+              Comment ça marche
+            </h2>
+
+            <div className="mt-14 grid gap-10 sm:grid-cols-3">
               {[
                 {
                   icon: Store,
-                  title: "1. Choisis une boutique",
+                  step: "1",
+                  title: "Choisis une boutique",
                   text: "Cherche la boutique ou le produit qui t'intéresse.",
                 },
                 {
                   icon: ShoppingCart,
-                  title: "2. Remplis ton panier",
+                  step: "2",
+                  title: "Remplis ton panier",
                   text: "Ajoute les produits et ajuste les quantités.",
                 },
                 {
                   icon: MessageCircle,
-                  title: "3. Envoie sur WhatsApp",
+                  step: "3",
+                  title: "Envoie sur WhatsApp",
                   text: "Le commerçant reçoit ta commande et te livre.",
                 },
               ].map((step) => (
-                <div key={step.title} className="rounded-lg border border-border bg-card p-5">
-                  <step.icon className="h-6 w-6 text-primary" />
-                  <p className="mt-3 font-semibold text-foreground">{step.title}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{step.text}</p>
+                <div key={step.step} className="flex flex-col items-center text-center">
+                  <span className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                    <step.icon className="h-10 w-10" />
+                    <span className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-xl bg-primary font-display text-base font-extrabold text-primary-foreground">
+                      {step.step}
+                    </span>
+                  </span>
+                  <p className="mt-6 font-display text-lg font-extrabold text-foreground">
+                    {step.title}
+                  </p>
+                  <p className="mt-2 max-w-xs text-sm text-muted-foreground">{step.text}</p>
                 </div>
               ))}
             </div>
-            <p className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
-              <Truck className="h-4 w-4 text-accent" />
-              Paiement à la livraison — aucun paiement en ligne nécessaire.
+
+            <div className="mt-16 grid gap-3 rounded-lg border border-border bg-card p-6 sm:grid-cols-3">
+              {[
+                { icon: Truck, label: "Paiement à la livraison" },
+                { icon: ShieldCheck, label: "Aucun compte requis" },
+                { icon: Clock, label: "Commande en 30 secondes" },
+              ].map((item) => (
+                <p
+                  key={item.label}
+                  className="flex items-center justify-center gap-2 text-sm font-semibold text-foreground"
+                >
+                  <item.icon className="h-5 w-5 text-accent" />
+                  {item.label}
+                </p>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 py-20">
+          <div className="rounded-lg border border-border bg-card p-8 text-center sm:p-12">
+            <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+              Tu vends des produits ?
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-base text-muted-foreground">
+              Ouvre ta boutique en ligne gratuitement, en moins de 5 minutes.
             </p>
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
+              <Link
+                to="/auth"
+                className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                <Store className="h-4 w-4" />
+                Créer ma boutique
+              </Link>
+              <Link
+                to="/devenir-commercant"
+                className="inline-flex items-center gap-2 rounded-md border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+              >
+                En savoir plus
+              </Link>
+            </div>
           </div>
         </section>
       </main>
