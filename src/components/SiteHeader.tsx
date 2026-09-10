@@ -12,7 +12,7 @@ export function SiteHeader() {
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <ShoppingBag className="h-5 w-5" />
           </span>
-          <span className="font-display text-lg font-bold tracking-tight text-foreground">
+          <span className="font-display text-lg font-extrabold tracking-tight text-foreground">
             Sahel <span className="text-primary">Star</span>
           </span>
         </Link>
@@ -22,15 +22,15 @@ export function SiteHeader() {
             to="/devenir-commercant"
             className="hidden items-center rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:flex"
           >
-            Devenir commerçant
+            Comment ça marche
           </Link>
           <Link
             to="/tableau-de-bord"
-            className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+            className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
           >
             <Store className="h-4 w-4" />
-            <span className="hidden sm:inline">Espace commerçant</span>
-            <span className="sm:hidden">Boutique</span>
+            <span className="hidden sm:inline">Créer une boutique</span>
+            <span className="sm:hidden">Ma boutique</span>
           </Link>
 
           <Link
