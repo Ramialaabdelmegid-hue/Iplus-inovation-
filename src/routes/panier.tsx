@@ -34,7 +34,7 @@ function orderNumber(): string {
   const now = new Date();
   const stamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}`;
   const rand = Math.floor(Math.random() * 9000 + 1000);
-  return `IP-${stamp}-${rand}`;
+  return `SS-${stamp}-${rand}`;
 }
 
 function CartPage() {
@@ -154,7 +154,12 @@ function CartPage() {
       navigate({ to: "/boutique/$slug", params: { slug: shop.slug } });
     } catch (error) {
       console.error(error);
-      toast.error("Impossible d'envoyer la commande. Réessaie.");
+      const raw = error instanceof Error ? error.message : "";
+      if (/stock insuffisant/i.test(raw) || /prix/i.test(raw) || /indisponible/i.test(raw)) {
+        toast.error(raw);
+      } else {
+        toast.error("Impossible d'envoyer la commande. Réessaie.");
+      }
     } finally {
       setSending(false);
     }
