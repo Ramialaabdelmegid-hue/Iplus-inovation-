@@ -134,12 +134,11 @@ function Home() {
             <p className="inline-flex items-center gap-2 rounded-md bg-background/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-background backdrop-blur">
               Made in Niger
             </p>
-            <h1 className="mt-4 max-w-2xl font-display text-3xl font-extrabold leading-tight tracking-tight text-background sm:text-5xl">
-              Toutes les boutiques du quartier, dans ton téléphone.
+            <h1 className="mt-4 max-w-2xl font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-background sm:text-6xl">
+              Découvrez. Choisissez. Achetez.
             </h1>
-            <p className="mt-4 max-w-xl text-base text-background/80">
-              Trouve une boutique, choisis tes produits, commande en quelques secondes. Sans créer
-              de compte, et tu paies à la livraison.
+            <p className="mt-5 max-w-xl text-lg font-semibold text-background/85">
+              Commande sur WhatsApp, paie à la livraison.
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
