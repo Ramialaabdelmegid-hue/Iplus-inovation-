@@ -1,7 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Search, MapPin, Store, MessageCircle, ShoppingCart, Truck } from "lucide-react";
+import {
+  Search,
+  MapPin,
+  Store,
+  MessageCircle,
+  ShoppingCart,
+  Truck,
+  ShieldCheck,
+  Clock,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
