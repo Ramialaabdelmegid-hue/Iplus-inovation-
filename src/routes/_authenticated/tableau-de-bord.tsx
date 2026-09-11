@@ -589,18 +589,12 @@ function ProductsPanel({ shopId }: { shopId: string }) {
             onChange={(urls) => setForm({ ...form, images: urls })}
             className="sm:col-span-2"
           />
-          <label className="text-sm sm:col-span-2">
-            <span className="font-medium">Vidéo de démonstration (optionnelle)</span>
-            <input
-              className={`${inputClass} mt-1`}
-              placeholder="https://... (30 à 60 secondes maximum)"
-              value={form.video_url}
-              onChange={(e) => setForm({ ...form, video_url: e.target.value })}
-            />
-            <span className="mt-1.5 block text-xs font-normal text-muted-foreground">
-              Colle le lien d'une courte vidéo (30 à 60 secondes) qui montre le produit.
-            </span>
-          </label>
+          <VideoUploadField
+            label="Vidéo de démonstration (optionnelle)"
+            value={form.video_url}
+            onChange={(url) => setForm({ ...form, video_url: url })}
+            className="sm:col-span-2"
+          />
           <textarea
             rows={2}
             className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:border-primary sm:col-span-2"
