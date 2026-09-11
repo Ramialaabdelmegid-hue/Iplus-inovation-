@@ -124,7 +124,7 @@ function ShopPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("id, name, description, price, category, stock, is_available, images")
+        .select("id, name, description, price, category, stock, is_available, images, video_url")
         .eq("shop_id", shop!.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -303,6 +303,16 @@ function ShopPage() {
                         <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                           {product.description}
                         </p>
+                      )}
+                      {product.video_url && (
+                        <a
+                          href={product.video_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-1 text-xs font-semibold text-primary underline"
+                        >
+                          Voir la vidéo du produit
+                        </a>
                       )}
                       <p className="mt-2 font-display text-base font-bold text-primary">
                         {fcfa(product.price)}
