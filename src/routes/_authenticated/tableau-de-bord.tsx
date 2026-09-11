@@ -10,6 +10,7 @@ import {
   Store,
   Plus,
   Trash2,
+  Pencil,
   ShoppingBag,
   BarChart3,
 } from "lucide-react";
@@ -376,7 +377,6 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
           className="sm:col-span-2"
         />
         <label className="text-sm sm:col-span-2">
-        <label className="text-sm sm:col-span-2">
           <span className="font-medium">Horaires d'ouverture</span>
           <input
             className={`${inputClass} mt-1`}
@@ -431,6 +431,29 @@ function ShopForm({ shop, onSaved }: { shop: Shop | null; onSaved: () => void })
   );
 }
 
+type ProductRow = {
+  id: string;
+  name: string;
+  price: number;
+  stock: number;
+  category: string | null;
+  description: string | null;
+  images: string[];
+  video_url: string | null;
+  is_available: boolean;
+};
+
+const emptyProduct = {
+  name: "",
+  price: 0,
+  stock: 0,
+  category: "",
+  description: "",
+  images: [] as string[],
+  video_url: "",
+  is_available: true,
+};
+
 function ProductsPanel({ shopId }: { shopId: string }) {
   const productsQuery = useQuery({
     queryKey: ["my-products", shopId],
@@ -441,43 +464,65 @@ function ProductsPanel({ shopId }: { shopId: string }) {
         .eq("shop_id", shopId)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []) as ProductRow[];
     },
   });
 
-  const [form, setForm] = useState({
-    name: "",
-    price: 0,
-    stock: 0,
-    category: "",
-    description: "",
-    image: "",
-  });
+  const [form, setForm] = useState({ ...emptyProduct });
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  async function addProduct() {
+  function startEdit(product: ProductRow) {
+    setEditingId(product.id);
+    setForm({
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      category: product.category ?? "",
+      description: product.description ?? "",
+      images: product.images ?? [],
+      video_url: product.video_url ?? "",
+      is_available: product.is_available,
+    });
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setForm({ ...emptyProduct });
+  }
+
+  async function saveProduct() {
     if (!form.name.trim()) {
       toast.error("Nom du produit obligatoire");
       return;
     }
     setSaving(true);
     try {
-      const { error } = await supabase.from("products").insert({
-        shop_id: shopId,
+      const payload = {
         name: form.name.trim(),
         price: Number(form.price) || 0,
         stock: Number(form.stock) || 0,
         category: form.category.trim() || null,
         description: form.description.trim() || null,
-        images: form.image.trim() ? [form.image.trim()] : [],
-      });
-      if (error) throw error;
-      toast.success("Produit ajouté");
-      setForm({ name: "", price: 0, stock: 0, category: "", description: "", image: "" });
+        images: form.images.filter(Boolean),
+        video_url: form.video_url.trim() || null,
+        is_available: form.is_available,
+      };
+      if (editingId) {
+        const { error } = await supabase.from("products").update(payload).eq("id", editingId);
+        if (error) throw error;
+        toast.success("Produit mis à jour");
+      } else {
+        const { error } = await supabase.from("products").insert({ shop_id: shopId, ...payload });
+        if (error) throw error;
+        toast.success("Produit ajouté");
+      }
+      cancelEdit();
       productsQuery.refetch();
     } catch (error) {
       console.error(error);
-      toast.error(error instanceof Error ? error.message : "Ajout impossible");
+      toast.error(error instanceof Error ? error.message : "Enregistrement impossible");
     } finally {
       setSaving(false);
     }
@@ -497,6 +542,7 @@ function ProductsPanel({ shopId }: { shopId: string }) {
     if (error) toast.error(error.message);
     else {
       toast.success("Produit supprimé");
+      if (editingId === id) cancelEdit();
       productsQuery.refetch();
     }
   }
@@ -504,7 +550,9 @@ function ProductsPanel({ shopId }: { shopId: string }) {
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-border bg-card p-6">
-        <h2 className="font-display text-lg font-bold text-foreground">Ajouter un produit</h2>
+        <h2 className="font-display text-lg font-bold text-foreground">
+          {editingId ? "Modifier le produit" : "Ajouter un produit"}
+        </h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <input
             className={inputClass}
@@ -534,13 +582,25 @@ function ProductsPanel({ shopId }: { shopId: string }) {
             value={form.stock}
             onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
           />
-          <ImageUploadField
-            label="Photo du produit"
+          <MultiImageUploadField
+            label="Photos du produit"
             folder="produits"
-            value={form.image}
-            onChange={(url) => setForm({ ...form, image: url })}
+            values={form.images}
+            onChange={(urls) => setForm({ ...form, images: urls })}
             className="sm:col-span-2"
           />
+          <label className="text-sm sm:col-span-2">
+            <span className="font-medium">Vidéo de démonstration (optionnelle)</span>
+            <input
+              className={`${inputClass} mt-1`}
+              placeholder="https://... (30 à 60 secondes maximum)"
+              value={form.video_url}
+              onChange={(e) => setForm({ ...form, video_url: e.target.value })}
+            />
+            <span className="mt-1.5 block text-xs font-normal text-muted-foreground">
+              Colle le lien d'une courte vidéo (30 à 60 secondes) qui montre le produit.
+            </span>
+          </label>
           <textarea
             rows={2}
             className="w-full rounded-xl border border-input bg-background p-3 text-sm outline-none focus:border-primary sm:col-span-2"
@@ -549,14 +609,24 @@ function ProductsPanel({ shopId }: { shopId: string }) {
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
         </div>
-        <button
-          onClick={addProduct}
-          disabled={saving}
-          className="mt-4 flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground disabled:opacity-60"
-        >
-          <Plus className="h-4 w-4" />
-          {saving ? "Ajout..." : "Ajouter"}
-        </button>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button
+            onClick={saveProduct}
+            disabled={saving}
+            className="flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground disabled:opacity-60"
+          >
+            <Plus className="h-4 w-4" />
+            {saving ? "Enregistrement..." : editingId ? "Enregistrer les modifications" : "Ajouter"}
+          </button>
+          {editingId && (
+            <button
+              onClick={cancelEdit}
+              className="h-11 rounded-xl border border-border px-5 text-sm font-semibold text-foreground hover:bg-secondary"
+            >
+              Annuler
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="rounded-lg border border-border bg-card p-6">
@@ -588,6 +658,7 @@ function ProductsPanel({ shopId }: { shopId: string }) {
                   <p className="text-xs text-muted-foreground">
                     {fcfa(product.price)} · stock {product.stock}
                     {product.category ? ` · ${product.category}` : ""}
+                    {product.images?.length > 1 ? ` · ${product.images.length} photos` : ""}
                   </p>
                 </div>
                 <label className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -598,6 +669,13 @@ function ProductsPanel({ shopId }: { shopId: string }) {
                   />
                   Disponible
                 </label>
+                <button
+                  onClick={() => startEdit(product)}
+                  className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs font-semibold text-foreground hover:bg-secondary"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                  Modifier
+                </button>
                 <button
                   onClick={() => removeProduct(product.id)}
                   className="rounded-lg border border-border p-2 text-muted-foreground hover:bg-secondary"
@@ -613,6 +691,97 @@ function ProductsPanel({ shopId }: { shopId: string }) {
     </div>
   );
 }
+
+function StatsPanel({ shopId }: { shopId: string }) {
+  const statsQuery = useQuery({
+    queryKey: ["my-stats", shopId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("id, total, status, created_at, order_items(product_name, quantity, unit_price)")
+        .eq("shop_id", shopId);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const stats = useMemo(() => {
+    const orders = statsQuery.data ?? [];
+    const now = new Date();
+    const monthOrders = orders.filter((o) => {
+      const d = new Date(o.created_at);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+    const valid = orders.filter((o) => o.status !== "annulee");
+    const revenue = valid.reduce((sum, o) => sum + (o.total ?? 0), 0);
+    const monthRevenue = monthOrders
+      .filter((o) => o.status !== "annulee")
+      .reduce((sum, o) => sum + (o.total ?? 0), 0);
+
+    const counts = new Map<string, number>();
+    for (const o of valid) {
+      for (const item of o.order_items ?? []) {
+        counts.set(item.product_name, (counts.get(item.product_name) ?? 0) + item.quantity);
+      }
+    }
+    let best: { name: string; qty: number } | null = null;
+    for (const [name, qty] of counts) {
+      if (!best || qty > best.qty) best = { name, qty };
+    }
+
+    return {
+      monthCount: monthOrders.length,
+      totalCount: orders.length,
+      monthRevenue,
+      revenue,
+      best,
+    };
+  }, [statsQuery.data]);
+
+  if (statsQuery.isLoading) {
+    return <p className="text-sm text-muted-foreground">Chargement...</p>;
+  }
+
+  const cards = [
+    { label: "Commandes ce mois", value: String(stats.monthCount) },
+    { label: "Chiffre d'affaires ce mois", value: fcfa(stats.monthRevenue) },
+    { label: "Commandes au total", value: String(stats.totalCount) },
+    { label: "Chiffre d'affaires estimé", value: fcfa(stats.revenue) },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {cards.map((card) => (
+          <div key={card.label} className="rounded-lg border border-border bg-card p-5">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {card.label}
+            </p>
+            <p className="mt-2 font-display text-2xl font-bold text-foreground">{card.value}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="rounded-lg border border-border bg-card p-6">
+        <h2 className="font-display text-lg font-bold text-foreground">Produit le plus vendu</h2>
+        {stats.best ? (
+          <p className="mt-2 text-sm text-foreground">
+            <span className="font-semibold">{stats.best.name}</span> — {stats.best.qty} vendu(s)
+          </p>
+        ) : (
+          <p className="mt-2 text-sm text-muted-foreground">
+            Pas encore assez de commandes pour établir un classement.
+          </p>
+        )}
+        <p className="mt-4 text-xs text-muted-foreground">
+          Le chiffre d'affaires est estimé à partir des commandes reçues (frais de livraison
+          inclus), hors commandes annulées.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 
 function OrdersPanel({ shopId }: { shopId: string }) {
   const ordersQuery = useQuery({
