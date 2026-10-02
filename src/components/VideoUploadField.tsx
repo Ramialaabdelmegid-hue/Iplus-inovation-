@@ -53,11 +53,7 @@ export function VideoUploadField({
               <X className="h-3.5 w-3.5" />
             </button>
           </div>
-        ) : (
-          <div className="flex h-32 w-56 items-center justify-center rounded-lg border border-dashed border-border bg-secondary/50 text-muted-foreground">
-            <Video className="h-6 w-6" />
-          </div>
-        )}
+        ) : null}
         <button
           type="button"
           disabled={busy}

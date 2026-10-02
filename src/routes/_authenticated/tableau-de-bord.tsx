@@ -21,6 +21,7 @@ import { ShareShopButton } from "@/components/ShareShopButton";
 import { ImageUploadField } from "@/components/ImageUploadField";
 import { MultiImageUploadField } from "@/components/MultiImageUploadField";
 import { VideoUploadField } from "@/components/VideoUploadField";
+import { BatchProductForm } from "@/components/BatchProductForm";
 
 
 export const Route = createFileRoute("/_authenticated/tableau-de-bord")({
@@ -472,6 +473,7 @@ function ProductsPanel({ shopId }: { shopId: string }) {
   const [form, setForm] = useState({ ...emptyProduct });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [mode, setMode] = useState<"single" | "batch">("single");
 
   function startEdit(product: ProductRow) {
     setEditingId(product.id);
@@ -550,6 +552,26 @@ function ProductsPanel({ shopId }: { shopId: string }) {
 
   return (
     <div className="space-y-6">
+      {!editingId && (
+        <div className="flex gap-2">
+          {(["single", "batch"] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setMode(m)}
+              className={`h-10 rounded-xl px-4 text-sm font-semibold ${mode === m ? "bg-primary text-primary-foreground" : "border border-border bg-background"}`}
+            >
+              {m === "single" ? "Produit unique" : "Ajout en lot"}
+            </button>
+          ))}
+        </div>
+      )}
+      {mode === "batch" && !editingId ? (
+        <div className="rounded-lg border border-border bg-card p-6">
+          <h2 className="font-display text-lg font-bold text-foreground">Ajout en lot par photos</h2>
+          <BatchProductForm shopId={shopId} onDone={() => productsQuery.refetch()} />
+        </div>
+      ) : (
       <div className="rounded-lg border border-border bg-card p-6">
         <h2 className="font-display text-lg font-bold text-foreground">
           {editingId ? "Modifier le produit" : "Ajouter un produit"}
@@ -604,6 +626,8 @@ function ProductsPanel({ shopId }: { shopId: string }) {
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
         </div>
+
+
         <div className="mt-4 flex flex-wrap gap-2">
           <button
             onClick={saveProduct}
@@ -623,6 +647,8 @@ function ProductsPanel({ shopId }: { shopId: string }) {
           )}
         </div>
       </div>
+      )}
+
 
       <div className="rounded-lg border border-border bg-card p-6">
         <h2 className="font-display text-lg font-bold text-foreground">
