@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { MessageCircle, Mail } from "lucide-react";
 
-export const SUPPORT_WHATSAPP = "22790000000";
-export const SUPPORT_EMAIL = "support@sahelstar.ne";
+export const SUPPORT_WHATSAPP = "22770930651";
+export const SUPPORT_EMAIL = "rami_alaabdelmegid@icloud.com";
 
 export function SiteFooter() {
   return (
