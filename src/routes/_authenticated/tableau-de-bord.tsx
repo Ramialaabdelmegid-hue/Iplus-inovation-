@@ -20,6 +20,7 @@ import { ShareShopButton } from "@/components/ShareShopButton";
 
 import { ImageUploadField } from "@/components/ImageUploadField";
 import { MultiImageUploadField } from "@/components/MultiImageUploadField";
+import { VideoUploadField } from "@/components/VideoUploadField";
 
 
 export const Route = createFileRoute("/_authenticated/tableau-de-bord")({
