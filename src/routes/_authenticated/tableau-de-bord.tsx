@@ -625,7 +625,9 @@ function ProductsPanel({ shopId }: { shopId: string }) {
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
-        </div>
+      </div>
+      )}
+
         <div className="mt-4 flex flex-wrap gap-2">
           <button
             onClick={saveProduct}
