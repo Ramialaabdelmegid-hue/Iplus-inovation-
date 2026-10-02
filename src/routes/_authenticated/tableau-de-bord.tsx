@@ -647,6 +647,8 @@ function ProductsPanel({ shopId }: { shopId: string }) {
           )}
         </div>
       </div>
+      )}
+
 
       <div className="rounded-lg border border-border bg-card p-6">
         <h2 className="font-display text-lg font-bold text-foreground">
