@@ -19,14 +19,14 @@ export function BatchProductForm({ shopId, onDone }: { shopId: string; onDone: (
 
   async function createAll() {
     const priceNum = Number(price);
-    if (!name.trim()) return toast.error("Nom de base obligatoire");
-    if (!priceNum || priceNum <= 0) return toast.error("Indique ton prix en FCFA");
-    if (files.length === 0) return toast.error("Choisis au moins une photo");
+    if (!name.trim()) { toast.error("Nom de base obligatoire"); return; }
+    if (!priceNum || priceNum <= 0) { toast.error("Indique ton prix en FCFA"); return; }
+    if (files.length === 0) { toast.error("Choisis au moins une photo"); return; }
     setProgress(0);
     try {
       const rows = [];
       for (let i = 0; i < files.length; i++) {
-        const url = await uploadImage(files[i], "produits");
+        const url = await uploadImage(files[i]!, "produits");
         rows.push({
           shop_id: shopId,
           name: files.length > 1 ? `${name.trim()} #${i + 1}` : name.trim(),
