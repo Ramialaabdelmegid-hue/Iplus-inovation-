@@ -24,21 +24,28 @@ export function BatchProductForm({ shopId, onDone }: { shopId: string; onDone: (
     if (files.length === 0) { toast.error("Choisis au moins une photo"); return; }
     setProgress(0);
     try {
-      const rows = [];
-      for (let i = 0; i < files.length; i++) {
-        const url = await uploadImage(files[i]!, "produits");
-        rows.push({
-          shop_id: shopId,
-          name: files.length > 1 ? `${name.trim()} #${i + 1}` : name.trim(),
-          price: priceNum,
-          stock: Number(stock) || 0,
-          category: category.trim() || null,
-          description: description.trim() || null,
-          images: [url],
-          is_available: true,
-        });
-        setProgress(i + 1);
-      }
+      let done = 0;
+      const urls: string[] = new Array(files.length);
+      let next = 0;
+      const worker = async () => {
+        while (next < files.length) {
+          const i = next++;
+          urls[i] = await uploadImage(files[i]!, "produits");
+          done++;
+          setProgress(done);
+        }
+      };
+      await Promise.all(Array.from({ length: Math.min(4, files.length) }, worker));
+      const rows = urls.map((url, i) => ({
+        shop_id: shopId,
+        name: files.length > 1 ? `${name.trim()} ${i + 1}` : name.trim(),
+        price: priceNum,
+        stock: Number(stock) || 0,
+        category: category.trim() || null,
+        description: description.trim() || null,
+        images: [url],
+        is_available: true,
+      }));
       const { error } = await supabase.from("products").insert(rows);
       if (error) throw error;
       toast.success(`${rows.length} produits créés`);
