@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Clock, MapPin, Search, Store, Truck } from "lucide-react";
+import { Clock, MapPin, MessageCircle, Search, Star, Store, Truck, Video } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -78,6 +78,7 @@ type Shop = {
   delivery_info: string | null;
   delivery_fee: number;
   opening_hours: string | null;
+  whatsapp: string;
 };
 
 
@@ -98,6 +99,7 @@ function ShopPage() {
   const { addItem } = useCart();
   const [term, setTerm] = useState("");
   const [category, setCategory] = useState<string | null>(null);
+  const [tab, setTab] = useState<"articles" | "avis" | "infos">("articles");
 
   const shopQuery = useQuery({
     queryKey: ["shop", slug],
@@ -105,7 +107,7 @@ function ShopPage() {
       const { data, error } = await supabase
         .from("shops")
         .select(
-          "id, name, slug, logo_url, description, city, quartier, delivery_info, delivery_fee, opening_hours",
+          "id, name, slug, logo_url, description, city, quartier, delivery_info, delivery_fee, opening_hours, whatsapp",
         )
 
         .eq("slug", slug)
@@ -129,6 +131,18 @@ function ShopPage() {
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as Product[];
+    },
+  });
+
+  const ratingQuery = useQuery({
+    queryKey: ["shop-rating", shop?.id],
+    enabled: !!shop?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("shop_reviews").select("rating").eq("shop_id", shop!.id);
+      if (error) throw error;
+      const list = data ?? [];
+      const avg = list.length ? list.reduce((a, r) => a + r.rating, 0) / list.length : 0;
+      return { avg, count: list.length };
     },
   });
 
@@ -202,6 +216,13 @@ function ShopPage() {
               <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
                 {shop.name}
               </h1>
+              {ratingQuery.data && ratingQuery.data.count > 0 && (
+                <p className="mt-1 flex items-center gap-1 text-sm font-semibold text-foreground">
+                  <Star className="h-4 w-4 fill-primary text-primary" />
+                  {ratingQuery.data.avg.toFixed(1)}
+                  <span className="font-normal text-muted-foreground">({ratingQuery.data.count} avis)</span>
+                </p>
+              )}
               {(shop.city || shop.quartier) && (
                 <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
                   <MapPin className="h-4 w-4" />
@@ -211,18 +232,6 @@ function ShopPage() {
               {shop.description && (
                 <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{shop.description}</p>
               )}
-              <p className="mt-2 flex items-center gap-1.5 text-sm font-medium text-accent">
-                <Truck className="h-4 w-4" />
-                Livraison : {fcfa(shop.delivery_fee)}
-                {shop.delivery_info ? ` — ${shop.delivery_info}` : ""}
-              </p>
-              {shop.opening_hours && (
-                <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Clock className="h-4 w-4" />
-                  Horaires : {shop.opening_hours}
-                </p>
-              )}
-
               <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold">
                 <span className="rounded-md bg-accent/15 px-2.5 py-1 text-accent">
                   Paiement à la livraison
@@ -231,12 +240,68 @@ function ShopPage() {
                   Commande sur WhatsApp
                 </span>
               </div>
-              <ShareShopButton slug={shop.slug} name={shop.name} className="mt-4" />
+              <div className="mt-4 flex flex-wrap gap-2">
+                <a
+                  href={`https://wa.me/${shop.whatsapp.replace(/\D/g, "")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-bold text-accent-foreground"
+                >
+                  <MessageCircle className="h-4 w-4" /> Contacter sur WhatsApp
+                </a>
+                <ShareShopButton slug={shop.slug} name={shop.name} />
+              </div>
             </div>
 
           </div>
         </section>
 
+        <div className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
+          <div className="mx-auto flex max-w-6xl px-4">
+            {([
+              ["articles", "Articles"],
+              ["avis", "Avis clients"],
+              ["infos", "Infos & horaires"],
+            ] as const).map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={`flex-1 border-b-2 py-3 text-sm font-semibold sm:flex-none sm:px-5 ${
+                  tab === key ? "border-primary text-primary" : "border-transparent text-muted-foreground"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {tab === "infos" && (
+          <section className="mx-auto max-w-6xl space-y-2 px-4 py-8">
+              <p className="flex items-center gap-1.5 text-sm font-medium text-accent">
+                <Truck className="h-4 w-4" />
+                Livraison : {fcfa(shop.delivery_fee)}
+                {shop.delivery_info ? ` — ${shop.delivery_info}` : ""}
+              </p>
+              {shop.opening_hours && (
+                <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+                  Horaires : {shop.opening_hours}
+                </p>
+              )}
+
+            {(shop.city || shop.quartier) && (
+              <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <MapPin className="h-4 w-4" /> {[shop.quartier, shop.city].filter(Boolean).join(", ")}
+              </p>
+            )}
+            {shop.description && <p className="text-sm text-muted-foreground">{shop.description}</p>}
+          </section>
+        )}
+
+        {tab === "avis" && <ShopReviews shopId={shop.id} />}
+
+        {tab === "articles" && (
         <section className="mx-auto max-w-6xl px-4 py-8">
           <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-2">
             <Search className="ml-2 h-5 w-5 text-muted-foreground" />
@@ -293,9 +358,23 @@ function ShopPage() {
                 return (
                   <article
                     key={product.id}
-                    className="flex flex-col overflow-hidden rounded-lg border border-border bg-card"
+                    className="flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm"
                   >
-                    <ProductGallery images={product.images ?? []} name={product.name} />
+                    <div className="relative">
+                      <ProductGallery images={product.images ?? []} name={product.name} />
+                      <div className="pointer-events-none absolute left-2 top-2 flex flex-col gap-1">
+                        {product.video_url && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-foreground/80 px-2 py-0.5 text-[10px] font-bold text-background">
+                            <Video className="h-3 w-3" /> Vidéo
+                          </span>
+                        )}
+                        {!soldOut && product.stock > 0 && product.stock <= 2 && (
+                          <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
+                            {product.stock === 1 ? "Dernier article" : "Plus que 2"}
+                          </span>
+                        )}
+                      </div>
+                    </div>
 
                     <div className="flex flex-1 flex-col p-3">
                       <p className="text-sm font-semibold text-foreground">{product.name}</p>
@@ -346,8 +425,7 @@ function ShopPage() {
             </div>
           )}
         </section>
-
-        <ShopReviews shopId={shop.id} />
+        )}
       </main>
 
 
