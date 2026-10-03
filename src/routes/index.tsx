@@ -185,12 +185,12 @@ function Home() {
             </div>
 
             {(cities.length > 0 || categories.length > 0) && (
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
                 {cities.map((item) => (
                   <button
                     key={`ville-${item}`}
                     onClick={() => setCity(city === item ? null : item)}
-                    className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                    className={`flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                       city === item
                         ? "bg-accent text-accent-foreground"
                         : "border border-background/40 bg-background/10 text-background backdrop-blur hover:bg-background/20"
@@ -203,8 +203,12 @@ function Home() {
                 {categories.map((category) => (
                   <button
                     key={category}
-                    onClick={() => setTerm(category)}
-                    className="rounded-md border border-background/40 bg-background/10 px-3 py-1.5 text-sm font-medium text-background backdrop-blur transition-colors hover:bg-background/20"
+                    onClick={() => setTerm(term === category ? "" : category)}
+                    className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                      term === category
+                        ? "bg-primary text-primary-foreground"
+                        : "border border-background/40 bg-background/10 text-background backdrop-blur hover:bg-background/20"
+                    }`}
                   >
                     {category}
                   </button>
