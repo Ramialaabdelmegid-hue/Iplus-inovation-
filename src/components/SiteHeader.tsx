@@ -1,51 +1,21 @@
 import { Link } from "@tanstack/react-router";
-import { ShoppingBag, Store } from "lucide-react";
+import { ShoppingBag, MessageCircle } from "lucide-react";
 import { useCart } from "@/lib/cart";
+import { BrandLogo } from "@/components/BrandLogo";
+import { Button } from "@/components/ui/button";
+import { SUPPORT_WHATSAPP } from "@/components/SiteFooter";
 
 export function SiteHeader() {
   const { count } = useCart();
-
-  return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <ShoppingBag className="h-5 w-5" />
-          </span>
-          <span className="font-display text-lg font-extrabold tracking-tight text-foreground">
-            Sahel <span className="text-primary">Star</span>
-          </span>
-        </Link>
-
-        <div className="ml-auto flex items-center gap-2">
-          <Link
-            to="/devenir-commercant"
-            className="hidden items-center rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:flex"
-          >
-            Comment ça marche
-          </Link>
-          <Link
-            to="/tableau-de-bord"
-            className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
-          >
-            <Store className="h-4 w-4" />
-            <span className="hidden sm:inline">Créer une boutique</span>
-            <span className="sm:hidden">Ma boutique</span>
-          </Link>
-
-          <Link
-            to="/panier"
-            className="relative flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-          >
-            Panier
-            {count > 0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-md bg-accent px-1 text-xs font-bold text-accent-foreground">
-                {count}
-              </span>
-            )}
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
+  return <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
+    <div className="mx-auto flex h-20 max-w-6xl items-center gap-3 px-4">
+      <Link to="/" aria-label="Arha Market, accueil"><BrandLogo /></Link>
+      <nav className="ml-auto flex items-center gap-2 sm:gap-6" aria-label="Navigation principale">
+        <Link to="/" hash="catalogue" className="hidden text-sm font-semibold sm:block">Catalogue</Link>
+        <Link to="/" hash="informations" className="hidden text-sm font-semibold sm:block">Livraison & contact</Link>
+        <Button asChild variant="ghost" size="icon" className="hidden sm:inline-flex"><a href={`https://wa.me/${SUPPORT_WHATSAPP}`} target="_blank" rel="noreferrer" aria-label="Contacter Arha Market sur WhatsApp"><MessageCircle /></a></Button>
+        <Button asChild variant="outline"><Link to="/panier"><ShoppingBag /><span className="hidden sm:inline">Panier</span>{count > 0 && <span className="font-bold text-primary">{count}</span>}</Link></Button>
+      </nav>
+    </div>
+  </header>;
 }

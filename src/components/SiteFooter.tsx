@@ -1,63 +1,16 @@
 import { Link } from "@tanstack/react-router";
-import { MessageCircle, Mail } from "lucide-react";
-
+import { MessageCircle, Mail, LockKeyhole, ArrowUpRight } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
+import { Button } from "@/components/ui/button";
 export const SUPPORT_WHATSAPP = "22770930651";
 export const SUPPORT_EMAIL = "rami_alaabdelmegid@icloud.com";
-
 export function SiteFooter() {
-  return (
-    <footer className="mt-20 border-t border-border/70 bg-secondary/40">
-      <div className="mx-auto max-w-6xl px-4 py-12 text-sm text-muted-foreground">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <p className="font-display text-base font-extrabold text-foreground">
-            Sahel <span className="text-primary">Star</span>
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <Link to="/" className="hover:text-foreground">
-              Accueil
-            </Link>
-            <Link to="/panier" className="hover:text-foreground">
-              Panier
-            </Link>
-            <Link to="/devenir-commercant" className="hover:text-foreground">
-              Devenir commerçant
-            </Link>
-            <Link to="/tableau-de-bord" className="hover:text-foreground">
-              Créer une boutique
-            </Link>
-          </div>
-        </div>
-
-        <div className="mt-8 rounded-lg border border-border bg-card p-5">
-          <p className="font-semibold text-foreground">Besoin d'aide ?</p>
-          <p className="mt-1 text-xs">
-            Une question, un blocage pour créer ta boutique ? Écris-nous, on répond vite.
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <a
-              href={`https://wa.me/${SUPPORT_WHATSAPP}`}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
-            >
-              <MessageCircle className="h-4 w-4" />
-              Support WhatsApp
-            </a>
-            <a
-              href={`mailto:${SUPPORT_EMAIL}`}
-              className="flex items-center gap-2 rounded-md border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
-            >
-              <Mail className="h-4 w-4" />
-              {SUPPORT_EMAIL}
-            </a>
-          </div>
-        </div>
-
-        <p className="mt-6">
-          Boutiques en ligne pour les commerçants du Niger. Paiement à la livraison, commande
-          envoyée directement sur WhatsApp.
-        </p>
-      </div>
-    </footer>
-  );
+  return <footer id="contact" className="border-t border-border bg-secondary/50">
+    <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-3">
+      <div><BrandLogo /><p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">Qualité, style, au meilleur prix.<br />Plus qu’un marché, une communauté.</p></div>
+      <div><h2 className="font-semibold">À votre service</h2><div className="mt-4 flex flex-col items-start gap-3 text-sm text-muted-foreground"><Link to="/" hash="catalogue">Notre catalogue</Link><Link to="/" hash="informations">Livraison & retrait</Link><Link to="/panier">Mon panier</Link></div></div>
+      <div><h2 className="font-semibold">Parlons de votre commande</h2><div className="mt-4 flex flex-col items-start gap-3"><Button asChild variant="outline"><a href={`https://wa.me/${SUPPORT_WHATSAPP}`} target="_blank" rel="noreferrer"><MessageCircle />WhatsApp<ArrowUpRight /></a></Button><a href={`mailto:${SUPPORT_EMAIL}`} className="flex max-w-full items-center gap-2 break-all text-xs text-muted-foreground"><Mail className="h-4 w-4 shrink-0" />{SUPPORT_EMAIL}</a></div></div>
+    </div>
+    <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 border-t border-border px-4 py-5 text-xs text-muted-foreground"><p>Arha Market · Niger</p><Link to="/auth" className="flex items-center gap-1.5"><LockKeyhole className="h-3 w-3" />Administration</Link></div>
+  </footer>;
 }
