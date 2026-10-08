@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791501520217,
+      "tag": "0000_arha_single_owner_access",
+      "breakpoints": true
+    }
+  ]
+}
