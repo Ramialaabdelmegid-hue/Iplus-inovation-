@@ -121,7 +121,7 @@ function DashboardPage() {
               <ShoppingBag className="h-5 w-5" />
             </span>
             <span className="font-display text-lg font-bold text-foreground">
-              Sahel <span className="text-primary">Star</span>
+              Arha <span className="text-primary">Market</span>
             </span>
           </Link>
           <div className="ml-auto flex items-center gap-2">
