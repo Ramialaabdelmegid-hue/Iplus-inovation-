@@ -27,13 +27,13 @@ import { BatchProductForm } from "@/components/BatchProductForm";
 export const Route = createFileRoute("/_authenticated/tableau-de-bord")({
   head: () => ({
     meta: [
-      { title: "Tableau de bord commerçant — Sahel Star" },
+      { title: "Tableau de bord commerçant — Arha Market" },
       {
         name: "description",
         content:
-          "Gérez votre boutique Sahel Star : informations, produits, stock et suivi des commandes reçues.",
+          "Gérez votre boutique Arha Market : informations, produits, stock et suivi des commandes reçues.",
       },
-      { property: "og:title", content: "Tableau de bord commerçant — Sahel Star" },
+      { property: "og:title", content: "Tableau de bord commerçant — Arha Market" },
       {
         property: "og:description",
         content: "Boutique, produits et commandes : tout se gère depuis un seul écran.",
@@ -121,7 +121,7 @@ function DashboardPage() {
               <ShoppingBag className="h-5 w-5" />
             </span>
             <span className="font-display text-lg font-bold text-foreground">
-              Sahel <span className="text-primary">Star</span>
+              Arha <span className="text-primary">Market</span>
             </span>
           </Link>
           <div className="ml-auto flex items-center gap-2">

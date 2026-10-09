@@ -21,7 +21,7 @@ export const Route = createFileRoute("/boutique/$slug")({
     const seo = loaderData?.seo;
     const name = seo?.name ?? params.slug;
     const place = [seo?.quartier, seo?.city].filter(Boolean).join(", ");
-    const title = `${name} — Boutique en ligne${place ? ` à ${place}` : ""} | Sahel Star`;
+    const title = `${name} — Boutique en ligne${place ? ` à ${place}` : ""} | Arha Market`;
     const description =
       seo?.description?.slice(0, 155) ||
       `Découvrez les produits de ${name}${place ? ` à ${place}` : ""} : prix en FCFA, commande sur WhatsApp et paiement à la livraison.`;
