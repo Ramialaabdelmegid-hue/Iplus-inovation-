@@ -179,7 +179,7 @@ function CartPage() {
               to="/"
               className="mt-4 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
             >
-              Voir les boutiques
+              Voir le catalogue
             </Link>
           </div>
         ) : (
