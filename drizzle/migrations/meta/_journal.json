@@ -8,6 +8,13 @@
       "when": 1791501520217,
       "tag": "0000_arha_single_owner_access",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791582172468,
+      "tag": "0001_fix_order_items_rls_and_clear_products",
+      "breakpoints": true
     }
   ]
 }

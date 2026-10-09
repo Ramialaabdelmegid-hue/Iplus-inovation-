@@ -311,6 +311,7 @@ export type Database = {
     }
     Functions: {
       is_arha_owner: { Args: never; Returns: boolean }
+      order_is_open: { Args: { _order_id: string }; Returns: boolean }
       owns_shop: { Args: { _shop_id: string }; Returns: boolean }
     }
     Enums: {
