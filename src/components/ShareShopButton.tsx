@@ -17,7 +17,7 @@ export function ShareShopButton({
     typeof window !== "undefined"
       ? `${window.location.origin}/boutique/${slug}`
       : `/boutique/${slug}`;
-  const message = `Découvre ma boutique ${name} sur Sahel Star : ${url}`;
+  const message = `Découvre ma boutique ${name} sur Arha Market : ${url}`;
 
   async function copy() {
     try {

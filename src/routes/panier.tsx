@@ -14,16 +14,16 @@ import { customerOrderSchema, checkOrderRate, recordOrderSent } from "@/lib/vali
 export const Route = createFileRoute("/panier")({
   head: () => ({
     meta: [
-      { title: "Mon panier — Sahel Star" },
+      { title: "Mon panier — Arha Market" },
       {
         name: "description",
         content:
           "Vérifiez votre panier, renseignez votre quartier et envoyez votre commande sur WhatsApp. Paiement à la livraison.",
       },
-      { property: "og:title", content: "Mon panier — Sahel Star" },
+      { property: "og:title", content: "Mon panier — Arha Market" },
       {
         property: "og:description",
-        content: "Commandez en quelques secondes et payez à la livraison avec Sahel Star.",
+        content: "Commandez en quelques secondes et payez à la livraison avec Arha Market.",
       },
     ],
   }),

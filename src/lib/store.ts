@@ -16,8 +16,8 @@ export type StoreProduct = {
 };
 
 async function publicRead<T>(path: string): Promise<T> {
-  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/${path}`, {
-    headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, Accept: "application/json" },
+  const response = await fetch(`${import.meta.env['VITE_SUPABASE_URL']}/rest/v1/${path}`, {
+    headers: { apikey: import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'], Accept: "application/json" },
   });
   if (!response.ok) throw new Error("Le catalogue est momentanément indisponible.");
   return response.json() as Promise<T>;

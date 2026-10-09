@@ -1,422 +1,109 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import {
-  Search,
-  MapPin,
-  Store,
-  MessageCircle,
-  ShoppingCart,
-  Truck,
-  ShieldCheck,
-  Clock,
-} from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { Search, ShoppingBag, Truck, MessageCircle, ShieldCheck } from "lucide-react";
+import { toast } from "sonner";
 import { SiteHeader } from "@/components/SiteHeader";
-import { SiteFooter } from "@/components/SiteFooter";
+import { SiteFooter, SUPPORT_WHATSAPP } from "@/components/SiteFooter";
+import { ProductGallery } from "@/components/ProductGallery";
+import { Button } from "@/components/ui/button";
+import { useCart } from "@/lib/cart";
 import { fcfa } from "@/lib/format";
-import heroImage from "@/assets/hero-sahel.jpg";
-
+import { storeQueryOptions, STORE_NAME } from "@/lib/store";
+import collection from "@/assets/arha-collection.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Sahel Star — Boutiques en ligne au Niger" },
-      {
-        name: "description",
-        content:
-          "Découvrez les boutiques de Sahel Star, commandez vos produits en FCFA et payez à la livraison. Commande envoyée directement sur WhatsApp.",
-      },
-      { property: "og:title", content: "Sahel Star — Boutiques en ligne au Niger" },
-      {
-        property: "og:description",
-        content:
-          "Boutiques locales, produits en FCFA, commande sur WhatsApp et paiement à la livraison.",
-      },
+      { title: "Arha Market — Pour elle, pour lui, pour tous" },
+      { name: "description", content: "Vêtements, chaussures, accessoires, beauté et informatique. Commandez sur WhatsApp et payez à la livraison au Niger." },
+      { property: "og:title", content: "Arha Market — Pour elle, pour lui, pour tous" },
+      { property: "og:description", content: "Le catalogue Arha Market : commande WhatsApp, paiement à la livraison." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(storeQueryOptions),
   component: Home,
 });
 
-type Shop = {
-  id: string;
-  name: string;
-  slug: string;
-  logo_url: string | null;
-  description: string | null;
-  city: string | null;
-  quartier: string | null;
-};
-
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  category: string | null;
-  images: string[];
-  shop_id: string;
-  shops: { name: string; slug: string } | null;
-};
-
 function Home() {
-  const [term, setTerm] = useState("");
-  const [city, setCity] = useState<string | null>(null);
-
-
-  const shopsQuery = useQuery({
-    queryKey: ["home-shops"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("shops")
-        .select("id, name, slug, logo_url, description, city, quartier")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false })
-        .limit(24);
-      if (error) throw error;
-      return (data ?? []) as Shop[];
-    },
-  });
-
-  const productsQuery = useQuery({
-    queryKey: ["home-products"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("id, name, price, category, images, shop_id, shops(name, slug)")
-        .eq("is_available", true)
-        .order("created_at", { ascending: false })
-        .limit(24);
-      if (error) throw error;
-      return (data ?? []) as unknown as Product[];
-    },
-  });
-
-  const search = term.trim().toLowerCase();
-
-  const cities = useMemo(() => {
-    const set = new Set<string>();
-    for (const s of shopsQuery.data ?? []) if (s.city) set.add(s.city);
-    return Array.from(set).sort();
-  }, [shopsQuery.data]);
-
-  const shops = useMemo(() => {
-    let list = shopsQuery.data ?? [];
-    if (city) list = list.filter((s) => s.city === city);
-    if (!search) return list;
-    return list.filter((s) =>
-      [s.name, s.city, s.quartier, s.description].some((v) =>
-        (v ?? "").toLowerCase().includes(search),
-      ),
-    );
-  }, [shopsQuery.data, search, city]);
-
-
-  const products = useMemo(() => {
-    const list = productsQuery.data ?? [];
-    if (!search) return list;
-    return list.filter((p) =>
-      [p.name, p.category, p.shops?.name].some((v) => (v ?? "").toLowerCase().includes(search)),
-    );
-  }, [productsQuery.data, search]);
-
-  const categories = useMemo(() => {
-    const set = new Set<string>();
-    for (const p of productsQuery.data ?? []) if (p.category) set.add(p.category);
-    return Array.from(set).slice(0, 12);
-  }, [productsQuery.data]);
+  const { data } = useSuspenseQuery(storeQueryOptions);
+  const { shop, products } = data;
+  const { addItem } = useCart();
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState<string | null>(null);
+  const categories = useMemo(() => [...new Set(products.map((p) => p.category).filter(Boolean))] as string[], [products]);
+  const list = products.filter((p) => (!cat || p.category === cat) && p.name.toLowerCase().includes(q.toLowerCase()));
 
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
-
       <main>
-        <section className="relative overflow-hidden border-b border-border/70">
-          <img
-            src={heroImage}
-            alt="Marché animé à Niamey, au Niger"
-            width={1600}
-            height={1008}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-foreground/70" />
-          <div className="relative mx-auto max-w-6xl px-4 py-16 sm:py-24">
-            <p className="inline-flex items-center gap-2 rounded-md bg-background/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-background backdrop-blur">
-              Made in Niger
-            </p>
-            <h1 className="mt-4 max-w-2xl font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-background sm:text-6xl">
-              Découvrez. Choisissez. Achetez.
-            </h1>
-            <p className="mt-5 max-w-xl text-lg font-semibold text-background/85">
-              Commande sur WhatsApp, paie à la livraison.
-            </p>
-
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link
-                to="/auth"
-                className="inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 text-sm font-bold text-accent-foreground transition-opacity hover:opacity-90"
-              >
-                <Store className="h-4 w-4" />
-                Crée ta boutique gratuitement
-              </Link>
-              <a
-                href="#boutiques"
-                className="inline-flex items-center gap-2 rounded-md border border-background/40 bg-background/10 px-5 py-3 text-sm font-semibold text-background backdrop-blur transition-colors hover:bg-background/20"
-              >
-                Voir les boutiques
-              </a>
-              <Link
-                to="/devenir-commercant"
-                className="inline-flex items-center gap-2 rounded-md px-5 py-3 text-sm font-semibold text-background underline underline-offset-4 transition-opacity hover:opacity-80"
-              >
-                Comment ça marche ?
-              </Link>
-
-            </div>
-
-            <div className="mt-8 flex items-center gap-2 rounded-lg border border-border bg-card p-2 shadow-lg">
-              <Search className="ml-2 h-5 w-5 shrink-0 text-muted-foreground" />
-              <input
-                value={term}
-                onChange={(event) => setTerm(event.target.value)}
-                placeholder="Rechercher une boutique, un produit, une catégorie..."
-                className="h-11 w-full bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground"
-                aria-label="Rechercher"
-              />
-            </div>
-
-            {(cities.length > 0 || categories.length > 0) && (
-              <div className="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
-                {cities.map((item) => (
-                  <button
-                    key={`ville-${item}`}
-                    onClick={() => setCity(city === item ? null : item)}
-                    className={`flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                      city === item
-                        ? "bg-accent text-accent-foreground"
-                        : "border border-background/40 bg-background/10 text-background backdrop-blur hover:bg-background/20"
-                    }`}
-                  >
-                    <MapPin className="h-3.5 w-3.5" />
-                    {item}
-                  </button>
-                ))}
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => setTerm(term === category ? "" : category)}
-                    className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                      term === category
-                        ? "bg-primary text-primary-foreground"
-                        : "border border-background/40 bg-background/10 text-background backdrop-blur hover:bg-background/20"
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            )}
+        <section className="relative overflow-hidden">
+          <img src={collection} alt="Collection Arha Market" className="absolute inset-0 h-full w-full object-cover opacity-40" width={1600} height={900} />
+          <div className="relative mx-auto max-w-6xl px-4 py-20 sm:py-28">
+            <p className="text-xs font-semibold uppercase text-primary">Pour elle · Pour lui · Pour tous</p>
+            <h1 className="mt-4 max-w-2xl font-display text-4xl font-extrabold sm:text-6xl">Qualité, style, au meilleur prix.</h1>
+            <p className="mt-4 max-w-xl text-muted-foreground">Commandez sur WhatsApp, payez à la livraison.</p>
+            <Button asChild className="mt-8 h-12"><a href="#catalogue"><ShoppingBag />Voir le catalogue</a></Button>
           </div>
         </section>
 
-        <section id="boutiques" className="mx-auto max-w-6xl px-4 py-12">
-
-          <div className="flex items-end justify-between gap-4">
-            <h2 className="font-display text-2xl font-bold text-foreground">Boutiques</h2>
-            <span className="text-sm text-muted-foreground">{shops.length} boutique(s)</span>
-          </div>
-
-          {shopsQuery.isLoading ? (
-            <p className="mt-6 text-sm text-muted-foreground">Chargement des boutiques...</p>
-          ) : shops.length === 0 ? (
-            <div className="mt-6 rounded-lg border border-dashed border-border p-8 text-center">
-              <Store className="mx-auto h-8 w-8 text-muted-foreground" />
-              <p className="mt-3 font-medium text-foreground">Aucune boutique pour le moment</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Tu es commerçant ? Crée ta boutique en quelques minutes.
-              </p>
-              <Link
-                to="/tableau-de-bord"
-                className="mt-4 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
-              >
-                Ouvrir ma boutique
-              </Link>
+        <section id="catalogue" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-14">
+          <h2 className="font-display text-2xl font-bold">Notre catalogue</h2>
+          <label className="mt-6 flex h-12 items-center gap-2 rounded-md border border-input bg-card px-3">
+            <Search className="h-4 w-4 text-muted-foreground" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Rechercher un article" className="w-full bg-transparent outline-none" />
+          </label>
+          {categories.length > 0 && (
+            <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
+              {[null, ...categories].map((c) => (
+                <button key={c ?? "all"} onClick={() => setCat(c)} className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold ${cat === c ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>{c ?? "Tout"}</button>
+              ))}
             </div>
+          )}
+          {list.length === 0 ? (
+            <p className="mt-10 text-center text-muted-foreground">Aucun article pour le moment.</p>
           ) : (
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {shops.map((shop) => (
-                <Link
-                  key={shop.id}
-                  to="/boutique/$slug"
-                  params={{ slug: shop.slug }}
-                  className="group rounded-lg border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-md"
-                >
-                  <div className="flex items-center gap-3">
-                    {shop.logo_url ? (
-                      <img
-                        src={shop.logo_url}
-                        alt={`Logo de ${shop.name}`}
-                        className="h-12 w-12 rounded-xl object-cover"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary font-display text-lg font-bold text-primary">
-                        {shop.name.slice(0, 1).toUpperCase()}
-                      </span>
-                    )}
-                    <div className="min-w-0">
-                      <p className="truncate font-semibold text-foreground">{shop.name}</p>
-                      {(shop.city || shop.quartier) && (
-                        <p className="flex items-center gap-1 truncate text-xs text-muted-foreground">
-                          <MapPin className="h-3 w-3" />
-                          {[shop.quartier, shop.city].filter(Boolean).join(", ")}
-                        </p>
-                      )}
+            <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+              {list.map((p) => {
+                const out = !p.is_available || p.stock <= 0;
+                return (
+                  <article key={p.id} className="flex flex-col overflow-hidden rounded-lg border border-border bg-card">
+                    <ProductGallery images={p.images} name={p.name} />
+                    <div className="flex flex-1 flex-col p-3">
+                      <h3 className="line-clamp-2 text-sm font-semibold">{p.name}</h3>
+                      <p className="mt-1 font-bold text-primary">{fcfa(p.price)}</p>
+                      {p.stock > 0 && p.stock <= 2 && <p className="text-xs text-muted-foreground">Plus que {p.stock}</p>}
+                      <Button size="sm" className="mt-auto pt-0" disabled={out || !shop} onClick={() => {
+                        if (!shop) return;
+                        addItem({ id: shop.id, slug: shop.slug, name: STORE_NAME }, { productId: p.id, name: p.name, price: p.price, image: p.images[0] ?? null });
+                        toast.success("Ajouté au panier");
+                      }}>{out ? "Épuisé" : "Ajouter"}</Button>
                     </div>
-                  </div>
-                  {shop.description && (
-                    <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
-                      {shop.description}
-                    </p>
-                  )}
-                </Link>
-              ))}
+                  </article>
+                );
+              })}
             </div>
           )}
         </section>
 
-        <section className="mx-auto max-w-6xl px-4 pb-12">
-          <h2 className="font-display text-2xl font-bold text-foreground">Produits populaires</h2>
-          {productsQuery.isLoading ? (
-            <p className="mt-6 text-sm text-muted-foreground">Chargement des produits...</p>
-          ) : products.length === 0 ? (
-            <p className="mt-6 text-sm text-muted-foreground">Aucun produit disponible.</p>
-          ) : (
-            <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-              {products.map((product) => (
-                <Link
-                  key={product.id}
-                  to="/boutique/$slug"
-                  params={{ slug: product.shops?.slug ?? "" }}
-                  className="group overflow-hidden rounded-lg border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  <div className="aspect-square overflow-hidden bg-secondary">
-                    {product.images?.[0] ? (
-                      <img
-                        src={product.images[0]}
-                        alt={product.name}
-                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-muted-foreground">
-                        <Store className="h-8 w-8" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-3">
-                    <p className="truncate text-sm font-semibold text-foreground">{product.name}</p>
-                    <p className="mt-1 font-display text-base font-bold text-primary">
-                      {fcfa(product.price)}
-                    </p>
-                    {product.shops?.name && (
-                      <p className="mt-1 truncate text-xs text-muted-foreground">
-                        {product.shops.name}
-                      </p>
-                    )}
-                  </div>
-                </Link>
-              ))}
+        <section id="informations" className="mx-auto grid max-w-6xl scroll-mt-24 gap-4 px-4 pb-16 sm:grid-cols-3">
+          {[
+            { icon: Truck, t: "Livraison", d: shop?.delivery_info ?? "Livraison à Niamey, paiement à la réception." },
+            { icon: MessageCircle, t: "Commande WhatsApp", d: "Votre panier est envoyé directement sur notre WhatsApp." },
+            { icon: ShieldCheck, t: "Paiement à la livraison", d: "Vous payez seulement quand vous recevez l'article." },
+          ].map(({ icon: Icon, t, d }) => (
+            <div key={t} className="rounded-lg border border-border bg-card p-5">
+              <Icon className="h-6 w-6 text-primary" />
+              <h3 className="mt-3 font-semibold">{t}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">{d}</p>
             </div>
-          )}
-        </section>
-
-        <section className="border-y border-border/70 bg-secondary/40">
-          <div className="mx-auto max-w-6xl px-4 py-20">
-            <h2 className="text-center font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-              Comment ça marche
-            </h2>
-
-            <div className="mt-14 grid gap-10 sm:grid-cols-3">
-              {[
-                {
-                  icon: Store,
-                  step: "1",
-                  title: "Choisis une boutique",
-                  text: "Cherche la boutique ou le produit qui t'intéresse.",
-                },
-                {
-                  icon: ShoppingCart,
-                  step: "2",
-                  title: "Remplis ton panier",
-                  text: "Ajoute les produits et ajuste les quantités.",
-                },
-                {
-                  icon: MessageCircle,
-                  step: "3",
-                  title: "Envoie sur WhatsApp",
-                  text: "Le commerçant reçoit ta commande et te livre.",
-                },
-              ].map((step) => (
-                <div key={step.step} className="flex flex-col items-center text-center">
-                  <span className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                    <step.icon className="h-10 w-10" />
-                    <span className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-xl bg-primary font-display text-base font-extrabold text-primary-foreground">
-                      {step.step}
-                    </span>
-                  </span>
-                  <p className="mt-6 font-display text-lg font-extrabold text-foreground">
-                    {step.title}
-                  </p>
-                  <p className="mt-2 max-w-xs text-sm text-muted-foreground">{step.text}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-16 grid gap-3 rounded-lg border border-border bg-card p-6 sm:grid-cols-3">
-              {[
-                { icon: Truck, label: "Paiement à la livraison" },
-                { icon: ShieldCheck, label: "Aucun compte requis" },
-                { icon: Clock, label: "Commande en 30 secondes" },
-              ].map((item) => (
-                <p
-                  key={item.label}
-                  className="flex items-center justify-center gap-2 text-sm font-semibold text-foreground"
-                >
-                  <item.icon className="h-5 w-5 text-accent" />
-                  {item.label}
-                </p>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-6xl px-4 py-20">
-          <div className="rounded-lg border border-border bg-card p-8 text-center sm:p-12">
-            <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-              Tu vends des produits ?
-            </h2>
-            <p className="mx-auto mt-3 max-w-xl text-base text-muted-foreground">
-              Ouvre ta boutique en ligne gratuitement, en moins de 5 minutes.
-            </p>
-            <div className="mt-7 flex flex-wrap justify-center gap-3">
-              <Link
-                to="/auth"
-                className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
-              >
-                <Store className="h-4 w-4" />
-                Créer ma boutique
-              </Link>
-              <Link
-                to="/devenir-commercant"
-                className="inline-flex items-center gap-2 rounded-md border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
-              >
-                En savoir plus
-              </Link>
-            </div>
-          </div>
+          ))}
+          <a href={`https://wa.me/${SUPPORT_WHATSAPP}`} className="sr-only">WhatsApp</a>
         </section>
       </main>
-
       <SiteFooter />
     </div>
   );
