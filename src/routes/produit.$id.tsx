@@ -80,8 +80,8 @@ function ProductPage() {
 
   function add() {
     if (!shop || !p) return;
-    if (sizes.length && !size) return toast.error("Choisis une taille");
-    if (colors.length && !color) return toast.error("Choisis une couleur");
+    if (sizes.length && !size) { toast.error("Choisis une taille"); return; }
+    if (colors.length && !color) { toast.error("Choisis une couleur"); return; }
     addItem({ id: shop.id, slug: shop.slug, name: STORE_NAME }, {
       productId: p.id, name: p.name, price: p.price, image: p.images[0] ?? null,
       size: sizes.length ? size : null, color: colors.length ? color : null,
