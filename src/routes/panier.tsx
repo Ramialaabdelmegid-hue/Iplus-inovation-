@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { useCart } from "@/lib/cart";
+import { useCart, itemKey } from "@/lib/cart";
 import { fcfa } from "@/lib/format";
 import { buildWhatsAppMessage, whatsappLink } from "@/lib/whatsapp";
 import { customerOrderSchema, checkOrderRate, recordOrderSent } from "@/lib/validation";
@@ -128,6 +128,8 @@ function CartPage() {
           product_name: item.name,
           quantity: item.quantity,
           unit_price: item.price,
+          size: item.size ?? null,
+          color: item.color ?? null,
         })),
       );
       if (itemsError) throw itemsError;
@@ -142,7 +144,7 @@ function CartPage() {
         quartier: values.quartier,
         address: values.address,
         deliveryMethod: values.method === "livraison" ? "Livraison" : "Retrait en boutique",
-        items: cart.items.map((i) => ({ name: i.name, quantity: i.quantity, price: i.price })),
+        items: cart.items.map((i) => ({ name: [i.name, i.size && `taille ${i.size}`, i.color].filter(Boolean).join(" · "), quantity: i.quantity, price: i.price })),
         subtotal,
         deliveryFee,
         total,
@@ -155,7 +157,7 @@ function CartPage() {
     } catch (error) {
       console.error(error);
       const raw = error instanceof Error ? error.message : "";
-      if (/stock insuffisant/i.test(raw) || /prix/i.test(raw) || /indisponible/i.test(raw)) {
+      if (/stock insuffisant/i.test(raw) || /prix/i.test(raw) || /indisponible/i.test(raw) || /choisis/i.test(raw)) {
         toast.error(raw);
       } else {
         toast.error("Impossible d'envoyer la commande. Réessaie.");
@@ -190,7 +192,7 @@ function CartPage() {
               </p>
               {cart.items.map((item) => (
                 <div
-                  key={item.productId}
+                  key={itemKey(item)}
                   className="flex items-center gap-3 rounded-lg border border-border bg-card p-3"
                 >
                   <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-secondary">
@@ -205,12 +207,13 @@ function CartPage() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium text-foreground">{item.name}</p>
+                    {(item.size || item.color) && <p className="text-xs text-muted-foreground">{[item.size && `Taille ${item.size}`, item.color].filter(Boolean).join(" · ")}</p>}
                     <p className="text-sm text-muted-foreground">{fcfa(item.price)}</p>
                   </div>
                   <div className="flex items-center gap-1">
                     <button
                       aria-label="Diminuer"
-                      onClick={() => setQuantity(item.productId, item.quantity - 1)}
+                      onClick={() => setQuantity(itemKey(item), item.quantity - 1)}
                       className="flex h-8 w-8 items-center justify-center rounded-md border border-border"
                     >
                       <Minus className="h-4 w-4" />
@@ -218,14 +221,14 @@ function CartPage() {
                     <span className="w-8 text-center font-semibold">{item.quantity}</span>
                     <button
                       aria-label="Augmenter"
-                      onClick={() => setQuantity(item.productId, item.quantity + 1)}
+                      onClick={() => setQuantity(itemKey(item), item.quantity + 1)}
                       className="flex h-8 w-8 items-center justify-center rounded-md border border-border"
                     >
                       <Plus className="h-4 w-4" />
                     </button>
                     <button
                       aria-label="Retirer"
-                      onClick={() => removeItem(item.productId)}
+                      onClick={() => removeItem(itemKey(item))}
                       className="ml-1 flex h-8 w-8 items-center justify-center rounded-md text-destructive"
                     >
                       <Trash2 className="h-4 w-4" />

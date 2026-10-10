@@ -13,6 +13,7 @@ export type StoreProduct = {
   id: string; name: string; price: number; category: string | null;
   description: string | null; images: string[]; stock: number;
   is_available: boolean; video_url: string | null;
+  sizes: string[]; colors: string[];
 };
 
 async function publicRead<T>(path: string): Promise<T> {
@@ -28,7 +29,7 @@ export const storeQueryOptions = queryOptions({
   queryFn: async () => {
     const [shops, products] = await Promise.all([
       publicRead<Store[]>(`shops?select=id,name,slug,whatsapp,description,logo_url,city,quartier,opening_hours,delivery_fee,delivery_info&id=eq.${STORE_ID}&is_active=is.true&limit=1`),
-      publicRead<StoreProduct[]>(`products?select=id,name,price,category,description,images,stock,is_available,video_url&shop_id=eq.${STORE_ID}&order=created_at.desc`),
+      publicRead<StoreProduct[]>(`products?select=id,name,price,category,description,images,stock,is_available,video_url,sizes,colors&shop_id=eq.${STORE_ID}&order=created_at.desc`),
     ]);
     return { shop: shops[0] ?? null, products };
   },
