@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Search, ShoppingBag, Truck, MessageCircle, ShieldCheck } from "lucide-react";
@@ -31,6 +31,7 @@ function Home() {
   const { data } = useSuspenseQuery(storeQueryOptions);
   const { shop, products } = data;
   const { addItem } = useCart();
+  const navigate = useNavigate();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string | null>(null);
   const categories = useMemo(() => [...new Set(products.map((p) => p.category).filter(Boolean))] as string[], [products]);
@@ -71,16 +72,17 @@ function Home() {
                 const out = !p.is_available || p.stock <= 0;
                 return (
                   <article key={p.id} className="flex flex-col overflow-hidden rounded-lg border border-border bg-card">
-                    <ProductGallery images={p.images} name={p.name} />
+                    <Link to="/produit/$id" params={{ id: p.id }}><ProductGallery images={p.images} name={p.name} /></Link>
                     <div className="flex flex-1 flex-col p-3">
-                      <h3 className="line-clamp-2 text-sm font-semibold">{p.name}</h3>
+                      <Link to="/produit/$id" params={{ id: p.id }}><h3 className="line-clamp-2 text-sm font-semibold">{p.name}</h3></Link>
                       <p className="mt-1 font-bold text-primary">{fcfa(p.price)}</p>
                       {p.stock > 0 && p.stock <= 2 && <p className="text-xs text-muted-foreground">Plus que {p.stock}</p>}
                       <Button size="sm" className="mt-auto pt-0" disabled={out || !shop} onClick={() => {
                         if (!shop) return;
+                        if (p.sizes?.length || p.colors?.length) { navigate({ to: "/produit/$id", params: { id: p.id } }); return; }
                         addItem({ id: shop.id, slug: shop.slug, name: STORE_NAME }, { productId: p.id, name: p.name, price: p.price, image: p.images[0] ?? null });
                         toast.success("Ajouté au panier");
-                      }}>{out ? "Épuisé" : "Ajouter"}</Button>
+                      }}>{out ? "Épuisé" : p.sizes?.length || p.colors?.length ? "Choisir" : "Ajouter"}</Button>
                     </div>
                   </article>
                 );

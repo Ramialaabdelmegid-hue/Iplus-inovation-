@@ -443,7 +443,11 @@ type ProductRow = {
   images: string[];
   video_url: string | null;
   is_available: boolean;
+  sizes: string[];
+  colors: string[];
 };
+
+const splitList = (v: string) => [...new Set(v.split(",").map((x) => x.trim()).filter(Boolean))].slice(0, 30);
 
 const emptyProduct = {
   name: "",
@@ -454,6 +458,8 @@ const emptyProduct = {
   images: [] as string[],
   video_url: "",
   is_available: true,
+  sizes: "",
+  colors: "",
 };
 
 function ProductsPanel({ shopId }: { shopId: string }) {
@@ -486,6 +492,8 @@ function ProductsPanel({ shopId }: { shopId: string }) {
       images: product.images ?? [],
       video_url: product.video_url ?? "",
       is_available: product.is_available,
+      sizes: (product.sizes ?? []).join(", "),
+      colors: (product.colors ?? []).join(", "),
     });
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -511,6 +519,8 @@ function ProductsPanel({ shopId }: { shopId: string }) {
         images: form.images.filter(Boolean),
         video_url: form.video_url.trim() || null,
         is_available: form.is_available,
+        sizes: splitList(form.sizes),
+        colors: splitList(form.colors),
       };
       if (editingId) {
         const { error } = await supabase.from("products").update(payload).eq("id", editingId);
@@ -604,6 +614,18 @@ function ProductsPanel({ shopId }: { shopId: string }) {
             placeholder="Stock"
             value={form.stock}
             onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
+          />
+          <input
+            className={inputClass}
+            placeholder="Tailles (ex: S, M, L ou 38, 39, 40)"
+            value={form.sizes}
+            onChange={(e) => setForm({ ...form, sizes: e.target.value })}
+          />
+          <input
+            className={inputClass}
+            placeholder="Couleurs (ex: Noir, Blanc, Rouge)"
+            value={form.colors}
+            onChange={(e) => setForm({ ...form, colors: e.target.value })}
           />
           <MultiImageUploadField
             label="Photos du produit"
@@ -895,7 +917,7 @@ function OrdersPanel({ shopId }: { shopId: string }) {
               {(order.order_items ?? []).map((item) => (
                 <li key={item.id} className="flex justify-between gap-3">
                   <span className="text-foreground">
-                    {item.quantity} × {item.product_name}
+                    {item.quantity} × {item.product_name}{item.size ? ` · Taille ${item.size}` : ""}{item.color ? ` · ${item.color}` : ""}
                   </span>
                   <span className="text-muted-foreground">
                     {fcfa(item.unit_price * item.quantity)}

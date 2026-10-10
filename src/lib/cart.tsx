@@ -7,7 +7,12 @@ export type CartItem = {
   price: number;
   quantity: number;
   image: string | null;
+  key?: string;
+  size?: string | null;
+  color?: string | null;
 };
+
+export const itemKey = (i: { productId: string; key?: string }) => i.key ?? i.productId;
 
 export type CartState = {
   shopId: string | null;
@@ -65,12 +70,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
           base = EMPTY;
           replaced = true;
         }
-        const existing = base.items.find((i) => i.productId === item.productId);
+        const k = [item.productId, item.size ?? "", item.color ?? ""].join("|");
+        const full = { ...item, key: k };
+        const existing = base.items.find((i) => itemKey(i) === k || (!i.key && i.productId === k));
         const items = existing
           ? base.items.map((i) =>
-              i.productId === item.productId ? { ...i, quantity: i.quantity + quantity } : i,
+              i === existing ? { ...i, quantity: i.quantity + quantity } : i,
             )
-          : [...base.items, { ...item, quantity }];
+          : [...base.items, { ...full, quantity }];
         const next: CartState = {
           shopId: shop.id,
           shopSlug: shop.slug,
@@ -93,7 +100,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     (productId: string, quantity: number) => {
       setCart((current) => {
         const items = current.items
-          .map((i) => (i.productId === productId ? { ...i, quantity } : i))
+          .map((i) => (itemKey(i) === productId ? { ...i, quantity } : i))
           .filter((i) => i.quantity > 0);
         const next = items.length ? { ...current, items } : EMPTY;
         try {

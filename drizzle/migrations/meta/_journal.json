@@ -15,6 +15,13 @@
       "when": 1791582172468,
       "tag": "0001_fix_order_items_rls_and_clear_products",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791619622475,
+      "tag": "0002_product_variants",
+      "breakpoints": true
     }
   ]
 }
