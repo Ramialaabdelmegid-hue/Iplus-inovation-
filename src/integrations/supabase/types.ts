@@ -16,30 +16,36 @@ export type Database = {
     Tables: {
       order_items: {
         Row: {
+          color: string | null
           created_at: string
           id: string
           order_id: string
           product_id: string | null
           product_name: string
           quantity: number
+          size: string | null
           unit_price: number
         }
         Insert: {
+          color?: string | null
           created_at?: string
           id?: string
           order_id: string
           product_id?: string | null
           product_name: string
           quantity?: number
+          size?: string | null
           unit_price?: number
         }
         Update: {
+          color?: string | null
           created_at?: string
           id?: string
           order_id?: string
           product_id?: string | null
           product_name?: string
           quantity?: number
+          size?: string | null
           unit_price?: number
         }
         Relationships: [
@@ -121,6 +127,7 @@ export type Database = {
       products: {
         Row: {
           category: string | null
+          colors: string[]
           created_at: string
           description: string | null
           id: string
@@ -129,12 +136,14 @@ export type Database = {
           name: string
           price: number
           shop_id: string
+          sizes: string[]
           stock: number
           updated_at: string
           video_url: string | null
         }
         Insert: {
           category?: string | null
+          colors?: string[]
           created_at?: string
           description?: string | null
           id?: string
@@ -143,12 +152,14 @@ export type Database = {
           name: string
           price?: number
           shop_id: string
+          sizes?: string[]
           stock?: number
           updated_at?: string
           video_url?: string | null
         }
         Update: {
           category?: string | null
+          colors?: string[]
           created_at?: string
           description?: string | null
           id?: string
@@ -157,6 +168,7 @@ export type Database = {
           name?: string
           price?: number
           shop_id?: string
+          sizes?: string[]
           stock?: number
           updated_at?: string
           video_url?: string | null
