@@ -707,6 +707,7 @@ function ProductsPanel({ shopId }: { shopId: string }) {
                   </span>
                 )}
                 <div className="min-w-40 flex-1">
+                  {product.brand && <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{product.brand}</p>}
                   <p className="text-sm font-semibold text-foreground">{product.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {fcfa(product.price)}
