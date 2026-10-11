@@ -1,4 +1,5 @@
 # Arha Market
+- [ ] Hide displayed stock quantities and remove automatic product-name numbering.
 - [ ] Apply supplied logo and rename public pages and messages.
 - [ ] Replace marketplace home with the owner's catalogue and simplify navigation.
 - [ ] Disable registration and restrict administration and writes to the verified owner.

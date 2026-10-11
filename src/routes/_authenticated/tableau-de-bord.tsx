@@ -699,7 +699,7 @@ function ProductsPanel({ shopId }: { shopId: string }) {
                 <div className="min-w-40 flex-1">
                   <p className="text-sm font-semibold text-foreground">{product.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {fcfa(product.price)} · stock {product.stock}
+                    {fcfa(product.price)}
                     {product.category ? ` · ${product.category}` : ""}
                     {product.images?.length > 1 ? ` · ${product.images.length} photos` : ""}
                   </p>

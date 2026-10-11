@@ -113,8 +113,7 @@ function ProductPage() {
             {p.category && <p className="text-xs font-semibold uppercase text-primary">{p.category}</p>}
             <h1 className="mt-2 font-display text-3xl font-extrabold">{p.name}</h1>
             <p className="mt-3 text-2xl font-bold text-primary">{fcfa(p.price)}</p>
-            {out ? <p className="mt-2 text-sm font-semibold text-destructive">Épuisé</p>
-              : p.stock <= 2 && <p className="mt-2 text-sm text-muted-foreground">Plus que {p.stock} en stock</p>}
+             {out && <p className="mt-2 text-sm font-semibold text-destructive">Épuisé</p>}
             {sizes.length > 0 && <Choice label="Taille" options={sizes} value={size} onChange={setSize} />}
             {colors.length > 0 && <Choice label="Couleur" options={colors} value={color} onChange={setColor} />}
             <div className="mt-8 flex gap-2">
