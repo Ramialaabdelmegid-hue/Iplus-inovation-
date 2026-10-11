@@ -126,6 +126,7 @@ export type Database = {
       }
       products: {
         Row: {
+          brand: string | null
           category: string | null
           colors: string[]
           created_at: string
@@ -142,6 +143,7 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          brand?: string | null
           category?: string | null
           colors?: string[]
           created_at?: string
@@ -158,6 +160,7 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          brand?: string | null
           category?: string | null
           colors?: string[]
           created_at?: string

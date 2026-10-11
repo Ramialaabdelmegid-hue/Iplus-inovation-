@@ -111,6 +111,7 @@ function ProductPage() {
           </div>
           <div>
             {p.category && <p className="text-xs font-semibold uppercase text-primary">{p.category}</p>}
+            {p.brand && <p className="mt-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">{p.brand}</p>}
             <h1 className="mt-2 font-display text-3xl font-extrabold">{p.name}</h1>
             <p className="mt-3 text-2xl font-bold text-primary">{fcfa(p.price)}</p>
              {out && <p className="mt-2 text-sm font-semibold text-destructive">Épuisé</p>}

@@ -14,6 +14,7 @@ export function BatchProductForm({ shopId, onDone }: { shopId: string; onDone: (
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("1");
   const [category, setCategory] = useState("");
+  const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
   const [progress, setProgress] = useState<number | null>(null);
 
@@ -44,6 +45,7 @@ export function BatchProductForm({ shopId, onDone }: { shopId: string; onDone: (
         price: priceNum,
         stock: Number(stock) || 0,
         category: category.trim() || null,
+        brand: brand.trim() || null,
         description: description.trim() || null,
         images: [url],
         is_available: true,
@@ -53,6 +55,7 @@ export function BatchProductForm({ shopId, onDone }: { shopId: string; onDone: (
       toast.success(`${rows.length} produits créés`);
       setFiles([]);
       setName("");
+      setBrand("");
       setDescription("");
       onDone();
     } catch (error) {
@@ -69,6 +72,7 @@ export function BatchProductForm({ shopId, onDone }: { shopId: string; onDone: (
       <div className="grid gap-4 sm:grid-cols-2">
         <input className={inputClass} placeholder="Nom de base * (ex: Robe Wax)" value={name} onChange={(e) => setName(e.target.value)} />
         <input className={inputClass} placeholder="Catégorie" value={category} onChange={(e) => setCategory(e.target.value)} />
+        <input className={inputClass} placeholder="Marque (ex: Nike)" value={brand} onChange={(e) => setBrand(e.target.value)} />
         <input className={inputClass} type="number" min={0} placeholder="Ton prix FCFA *" value={price} onChange={(e) => setPrice(e.target.value)} />
         <input className={inputClass} type="number" min={0} placeholder="Stock par article" value={stock} onChange={(e) => setStock(e.target.value)} />
       </div>
