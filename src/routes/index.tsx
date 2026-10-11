@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Arha Market — Pour elle, pour lui, pour tous" },
-      { name: "description", content: "Vêtements, chaussures, accessoires, beauté et informatique. Commandez sur WhatsApp et payez à la livraison au Niger." },
+      { name: "description", content: "Vêtements, sandales, accessoires, beauté et informatique. Commandez sur WhatsApp et payez à la livraison au Niger." },
       { property: "og:title", content: "Arha Market — Pour elle, pour lui, pour tous" },
       { property: "og:description", content: "Le catalogue Arha Market : commande WhatsApp, paiement à la livraison." },
       { property: "og:type", content: "website" },
