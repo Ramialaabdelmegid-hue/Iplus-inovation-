@@ -438,6 +438,7 @@ type ProductRow = {
   name: string;
   price: number;
   stock: number;
+  brand: string | null;
   category: string | null;
   description: string | null;
   images: string[];
@@ -453,6 +454,7 @@ const emptyProduct = {
   name: "",
   price: 0,
   stock: 0,
+  brand: "",
   category: "",
   description: "",
   images: [] as string[],
@@ -487,6 +489,7 @@ function ProductsPanel({ shopId }: { shopId: string }) {
       name: product.name,
       price: product.price,
       stock: product.stock,
+      brand: product.brand ?? "",
       category: product.category ?? "",
       description: product.description ?? "",
       images: product.images ?? [],
@@ -514,6 +517,7 @@ function ProductsPanel({ shopId }: { shopId: string }) {
         name: form.name.trim(),
         price: Number(form.price) || 0,
         stock: Number(form.stock) || 0,
+        brand: form.brand.trim() || null,
         category: form.category.trim() || null,
         description: form.description.trim() || null,
         images: form.images.filter(Boolean),
@@ -592,6 +596,12 @@ function ProductsPanel({ shopId }: { shopId: string }) {
             placeholder="Nom du produit *"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
+          />
+          <input
+            className={inputClass}
+            placeholder="Marque (ex: Nike)"
+            value={form.brand}
+            onChange={(e) => setForm({ ...form, brand: e.target.value })}
           />
           <input
             className={inputClass}

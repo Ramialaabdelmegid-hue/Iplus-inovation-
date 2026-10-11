@@ -74,7 +74,10 @@ function Home() {
                   <article key={p.id} className="flex flex-col overflow-hidden rounded-lg border border-border bg-card">
                     <Link to="/produit/$id" params={{ id: p.id }}><ProductGallery images={p.images} name={p.name} /></Link>
                     <div className="flex flex-1 flex-col p-3">
-                      <Link to="/produit/$id" params={{ id: p.id }}><h3 className="line-clamp-2 text-sm font-semibold">{p.name}</h3></Link>
+                      <Link to="/produit/$id" params={{ id: p.id }}>
+                        {p.brand && <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{p.brand}</p>}
+                        <h3 className="line-clamp-2 text-sm font-semibold">{p.name}</h3>
+                      </Link>
                       <p className="mt-1 font-bold text-primary">{fcfa(p.price)}</p>
                       <Button size="sm" className="mt-auto pt-0" disabled={out || !shop} onClick={() => {
                         if (!shop) return;
