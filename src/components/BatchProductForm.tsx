@@ -30,15 +30,17 @@ export function BatchProductForm({ shopId, onDone }: { shopId: string; onDone: (
       const worker = async () => {
         while (next < files.length) {
           const i = next++;
-          urls[i] = await uploadImage(files[i]!, "produits");
+          const file = files[i];
+          if (!file) continue;
+          urls[i] = await uploadImage(file, "produits");
           done++;
           setProgress(done);
         }
       };
       await Promise.all(Array.from({ length: Math.min(4, files.length) }, worker));
-      const rows = urls.map((url, i) => ({
+      const rows = urls.map((url) => ({
         shop_id: shopId,
-        name: files.length > 1 ? `${name.trim()} ${i + 1}` : name.trim(),
+        name: name.trim(),
         price: priceNum,
         stock: Number(stock) || 0,
         category: category.trim() || null,

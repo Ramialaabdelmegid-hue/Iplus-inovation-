@@ -368,11 +368,6 @@ function ShopPage() {
                             <Video className="h-3 w-3" /> Vidéo
                           </span>
                         )}
-                        {!soldOut && product.stock > 0 && product.stock <= 2 && (
-                          <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
-                            {product.stock === 1 ? "Dernier article" : "Plus que 2"}
-                          </span>
-                        )}
                       </div>
                     </div>
 

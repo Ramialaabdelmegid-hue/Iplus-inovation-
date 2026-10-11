@@ -76,7 +76,6 @@ function Home() {
                     <div className="flex flex-1 flex-col p-3">
                       <Link to="/produit/$id" params={{ id: p.id }}><h3 className="line-clamp-2 text-sm font-semibold">{p.name}</h3></Link>
                       <p className="mt-1 font-bold text-primary">{fcfa(p.price)}</p>
-                      {p.stock > 0 && p.stock <= 2 && <p className="text-xs text-muted-foreground">Plus que {p.stock}</p>}
                       <Button size="sm" className="mt-auto pt-0" disabled={out || !shop} onClick={() => {
                         if (!shop) return;
                         if (p.sizes?.length || p.colors?.length) { navigate({ to: "/produit/$id", params: { id: p.id } }); return; }
